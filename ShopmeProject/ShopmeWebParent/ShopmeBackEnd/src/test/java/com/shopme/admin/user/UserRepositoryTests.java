@@ -96,4 +96,11 @@ public class UserRepositoryTests {
         Optional<User> oUser = userRepository.getUserByEmail(email);
         assertThat(oUser).isPresent();
     }
+
+    @Test
+    public void testCountById() {
+        Integer id = 1;
+        Long count = userRepository.countById(id);
+        assertThat(count).isNotNull().isGreaterThan(0);
+    }
 }
