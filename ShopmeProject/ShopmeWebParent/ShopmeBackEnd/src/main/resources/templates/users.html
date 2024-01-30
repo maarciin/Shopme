@@ -6,6 +6,8 @@
 	<title>Home - Shopme Admin</title>
 
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/style.css}">
 	<script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 	<script type="text/javascript" th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
 </head>
@@ -85,14 +87,19 @@
 				<tbody>
 					<tr th:each="user : ${listUsers}">
 						<td th:text="${user.id}"></td>
-						<td th:text="${user.photos}"></td>
+						<td><span class="fas fa-portrait fa-3x icon-dark"></span></td>
 						<td th:text="${user.email}"></td>
 						<td th:text="${user.firstName}"></td>
 						<td th:text="${user.lastName}"></td>
 						<td th:text="${user.roles}"></td>
-						<td th:text="${user.enabled}"></td>
 						<td>
-							Edit &nbsp; Delete
+							<a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green" href=""></a>
+							<a th:if="${user.enabled == false}" class="fas fa-check-circle fa-2x icon-dark" href=""></a>
+						</td>
+						<td>
+							<a class="fas fa-edit fa-2x icon-green" href=""></a>
+							&nbsp;
+							<a class="fas fa-solid fa-square-xmark fa-2x icon-red" href=""></a>
 						</td>
 					</tr>
 				</tbody>
