@@ -89,4 +89,11 @@ public class UserRepositoryTests {
         Optional<User> oUser = userRepository.findById(userId);
         assertThat(oUser).isEmpty();
     }
+
+    @Test
+    public void testGetUserByEmail() {
+        String email = "gawlikmarcin@gmail.com";
+        Optional<User> oUser = userRepository.getUserByEmail(email);
+        assertThat(oUser).isPresent();
+    }
 }
