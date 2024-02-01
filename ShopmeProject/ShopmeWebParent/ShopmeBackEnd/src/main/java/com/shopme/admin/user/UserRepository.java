@@ -4,12 +4,13 @@ import com.shopme.common.entity.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UserRepository extends PagingAndSortingRepository<User, Integer>, CrudRepository<User, Integer> {
     Optional<User> getUserByEmail(String email);
 
     Long countById(Integer id);
