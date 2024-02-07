@@ -62,6 +62,24 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User updateAccount(User userInForm) {
+        User userInDb = userRepository.findById(userInForm.getId()).get();
+
+        if (!userInForm.getPassword().isEmpty()) {
+            userInDb.setPassword(userInForm.getPassword());
+            encodePassword(userInDb);
+        }
+
+        if (userInForm.getPhotos() != null) {
+            userInDb.setPhotos(userInForm.getPhotos());
+        }
+
+        userInDb.setFirstName(userInForm.getFirstName());
+        userInDb.setLastName(userInForm.getLastName());
+
+        return userRepository.save(userInDb);
+    }
+
     private void encodePassword(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -96,5 +114,10 @@ public class UserService {
 
     public void updateUserEnabledStatus(Integer id, boolean enabled) {
         userRepository.updateEnabledStatus(id, enabled);
+    }
+
+    public User getByEmail(String email) throws UserNotFoundException {
+        return userRepository.getUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Could not find any user with email " + email));
     }
 }
