@@ -2,6 +2,7 @@ package com.shopme.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Table(name = "categories")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Category {
 
     @Id
@@ -23,14 +25,29 @@ public class Category {
     @Column(length = 64, nullable = false, unique = true)
     private String alias;
 
-    @Column(length = 64, nullable = false, unique = true)
+    @Column(length = 64, nullable = false)
     private String image;
     private boolean enabled;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
     private Set<Category> children = new HashSet<>();
+
+    public Category(Integer id) {
+        this.id = id;
+    }
+
+    public Category(String name) {
+        this.name = name;
+        this.alias = name;
+        this.image = "default.png";
+    }
+
+    public Category(String name, Category parent) {
+        this(name);
+        this.parent = parent;
+    }
 }
