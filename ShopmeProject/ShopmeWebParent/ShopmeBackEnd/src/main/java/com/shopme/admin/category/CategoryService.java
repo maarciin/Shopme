@@ -4,6 +4,7 @@ import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,5 +15,36 @@ public class CategoryService {
 
     public List<Category> listAll() {
         return (List<Category>) categoryRepository.findAll();
+    }
+
+    public List<Category> listCategoriesUsedInForm() {
+        List<Category> categoriesUsedInForm = new ArrayList<>();
+        Iterable<Category> categoriesInDB = categoryRepository.findAll();
+
+        for (Category category : categoriesInDB) {
+            if (category.getParent() == null) {
+                categoriesUsedInForm.add(new Category(category.getName()));
+
+                for (Category subCategory : category.getChildren()) {
+                    String subCategoryName = "--" + subCategory.getName();
+                    categoriesUsedInForm.add(new Category(subCategoryName));
+                    listChildren(categoriesUsedInForm, subCategory, 1);
+                }
+            }
+        }
+        return categoriesUsedInForm;
+    }
+
+    private void listChildren(List<Category> categoriesUsedInForm, Category parent, int subLevel) {
+        for (Category subCategory : parent.getChildren()) {
+            String name = "";
+            for (int i = 0; i <= subLevel; i++) {
+                name += "--";
+            }
+            name += subCategory.getName();
+            categoriesUsedInForm.add(new Category(name));
+
+            listChildren(categoriesUsedInForm, subCategory, subLevel);
+        }
     }
 }
