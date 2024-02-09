@@ -43,7 +43,9 @@
             <tbody>
                 <tr th:each="category : ${listCategories}">
                     <td th:text="${category.id}"></td>
-                    <td></td>
+                    <td>
+                        <img th:src="@{${category.imagePath}}" style="width: 100px" class="img-fluid">
+                    </td>
                     <td th:text="${category.name}"></td>
                     <td th:text="${category.alias}"></td>
                     <td>
