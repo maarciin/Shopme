@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest(showSql = false)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -86,5 +87,23 @@ public class CategoryRepositoryTests {
     public void testListRootCategories() {
         List<Category> rootCategories = categoryRepository.findRootCategories();
         rootCategories.forEach(category -> System.out.println(category.getName()));
+    }
+    
+    @Test
+    public void testFindByName() {
+        String name = "Computers";
+        Optional<Category> category = categoryRepository.findByName(name);
+
+        assertTrue(category.isPresent());
+        category.ifPresent(value -> assertThat(value.getName()).isEqualTo(name));
+    }
+
+    @Test
+    public void testFindByAlias() {
+        String alias = "Electronics";
+        Optional<Category> category = categoryRepository.findByAlias(alias);
+
+        assertTrue(category.isPresent());
+        category.ifPresent(value -> assertThat(value.getName()).isEqualTo(alias));
     }
 }

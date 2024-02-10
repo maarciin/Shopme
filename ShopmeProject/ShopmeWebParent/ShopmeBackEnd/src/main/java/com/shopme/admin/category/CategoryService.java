@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -87,5 +88,30 @@ public class CategoryService {
     public Category getById(Integer id) throws CategoryNotFoundException {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Could not find any category with ID " + id));
+    }
+
+    public String checkUnique(Integer id, String name, String alias) {
+        boolean isCreateMode = (id == null || id == 0);
+
+        Optional<Category> categoryByName = categoryRepository.findByName(name);
+        Optional<Category> categoryByAlias = categoryRepository.findByAlias(alias);
+
+        if (isCreateMode) {
+            if (categoryByName.isPresent()) {
+                return "DuplicateName";
+            } else {
+                if (categoryByAlias.isPresent()) {
+                    return "DuplicateAlias";
+                }
+            }
+        } else {
+            if (categoryByName.isPresent() && categoryByName.get().getId() != id) {
+                return "DuplicateName";
+            }
+            if (categoryByAlias.isPresent() && categoryByAlias.get().getId() != id) {
+                return "DuplicateAlias";
+            }
+        }
+        return "OK";
     }
 }
