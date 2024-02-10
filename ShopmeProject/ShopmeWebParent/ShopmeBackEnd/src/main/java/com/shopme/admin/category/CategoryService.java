@@ -83,4 +83,9 @@ public class CategoryService {
     public Category save(Category category) {
         return categoryRepository.save(category);
     }
+
+    public Category getById(Integer id) throws CategoryNotFoundException {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Could not find any category with ID " + id));
+    }
 }
