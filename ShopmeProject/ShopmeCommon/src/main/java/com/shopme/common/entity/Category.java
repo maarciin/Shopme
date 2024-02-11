@@ -36,6 +36,9 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     private Set<Category> children = new HashSet<>();
 
+    @Transient
+    private boolean hasChildren;
+
     public Category(Integer id) {
         this.id = id;
     }
@@ -80,6 +83,7 @@ public class Category {
         copyCategory.setImage(category.getImage());
         copyCategory.setAlias(category.getAlias());
         copyCategory.setEnabled(category.isEnabled());
+        copyCategory.setHasChildren(!category.children.isEmpty());
 
         return copyCategory;
     }
@@ -98,4 +102,5 @@ public class Category {
         }
         return "/category-images/" + this.id + "/" + this.image;
     }
+
 }

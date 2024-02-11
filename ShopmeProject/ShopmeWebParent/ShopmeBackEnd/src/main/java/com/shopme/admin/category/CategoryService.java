@@ -1,6 +1,7 @@
 package com.shopme.admin.category;
 
 import com.shopme.common.entity.Category;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -143,5 +145,13 @@ public class CategoryService {
 
     public void updateCategoryEnabledStatus(Integer id, boolean status) {
         categoryRepository.updateEnabledStatus(id, status);
+    }
+
+    public void deleteCategory(Integer id) throws CategoryNotFoundException {
+        Long countById = categoryRepository.countById(id);
+        if (countById == null || countById == 0) {
+            throw new CategoryNotFoundException("Could not find any category with ID " + id);
+        }
+        categoryRepository.deleteById(id);
     }
 }

@@ -42,6 +42,17 @@
         ></a>
     </div>
 
+    <div th:fragment="category_actions" th:remove="tag">
+        <a class="fas fa-edit fa-2x icon-green" th:href="@{'/categories/edit/' + ${category.id}}"
+           title="Edit this category"></a>
+        &nbsp;
+        <a th:if="${category.hasChildren == false}"
+           class="fas fa-solid fa-square-xmark fa-2x icon-red link-delete"
+           th:href="@{'/categories/delete/' + ${category.id}}"
+           th:entityId="${category.id}"
+           title="Delete this category"></a>
+    </div>
+
     <div th:fragment="footer" class="text-center m-3">
         <p>Shopme Control Panel - Copyright &copy; Shopme</p>
     </div>
