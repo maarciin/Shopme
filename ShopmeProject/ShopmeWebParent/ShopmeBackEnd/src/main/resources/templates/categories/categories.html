@@ -52,14 +52,7 @@
                     <td th:text="${category.name}"></td>
                     <td th:text="${category.alias}"></td>
                     <td>
-                        <a th:if="${category.enabled == true}" class="fas fa-check-circle fa-2x icon-green"
-                           th:href="@{'/categories/' + ${category.id} + '/enabled/false'}"
-                           title="Disable this category"
-                        ></a>
-                        <a th:if="${category.enabled == false}" class="fas fa-circle fa-2x icon-dark"
-                           th:href="@{'/categories/' + ${category.id} + '/enabled/true'}"
-                           title="Enable this category"
-                        ></a>
+                      <div th:replace="fragments :: category_status"></div>
                     </td>
                     <td>
                         <a class="fas fa-edit fa-2x icon-green" th:href="@{'/categories/edit/' + ${category.id}}"
