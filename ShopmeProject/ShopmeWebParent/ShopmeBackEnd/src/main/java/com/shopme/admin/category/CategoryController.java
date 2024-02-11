@@ -20,9 +20,18 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/categories")
-    public String getCategories(Model model) {
-        List<Category> listCategories = categoryService.listAll();
+    public String getCategories(@RequestParam(required = false) String sortDir, Model model) {
+
+        if (sortDir == null || sortDir.isEmpty()) {
+            sortDir = "asc";
+        }
+
+        List<Category> listCategories = categoryService.listAll(sortDir);
         model.addAttribute("listCategories", listCategories);
+
+        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+        model.addAttribute("reverseSortDir", reverseSortDir);
+
         return "categories/categories";
     }
 
