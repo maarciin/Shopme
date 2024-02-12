@@ -3,6 +3,9 @@ package com.shopme.admin.category;
 import com.shopme.common.entity.Category;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +16,23 @@ import java.util.*;
 @Transactional
 public class CategoryService {
 
+    public static final int ROOT_CATEGORIES_PER_PAGE = 2;
+
     private final CategoryRepository categoryRepository;
 
-    public List<Category> listAll(String sortDir) {
+    public List<Category> listByPage(CategoryPageInfo pageInfo, int pageNum, String sortDir) {
         Sort sort = Sort.by("name");
 
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 
-        List<Category> rootCategories = categoryRepository.findRootCategories(sort);
+        Pageable pageable = PageRequest.of(pageNum - 1, ROOT_CATEGORIES_PER_PAGE, sort);
+
+        Page<Category> pageCategories = categoryRepository.findRootCategories(pageable);
+        List<Category> rootCategories = pageCategories.getContent();
+
+        pageInfo.setTotalElements(pageCategories.getTotalElements());
+        pageInfo.setTotalPages(pageCategories.getTotalPages());
+
         return listHierarchicalCategories(rootCategories, sortDir);
     }
 
