@@ -103,4 +103,13 @@ public class Category {
         return "/category-images/" + this.id + "/" + this.image;
     }
 
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", alias='" + alias + '\'' +
+                ", enabled=" + enabled +
+                '}';
+    }
 }
