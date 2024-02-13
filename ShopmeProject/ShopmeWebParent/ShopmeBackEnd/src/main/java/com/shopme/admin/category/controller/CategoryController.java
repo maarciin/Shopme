@@ -1,13 +1,20 @@
-package com.shopme.admin.category;
+package com.shopme.admin.category.controller;
 
 import com.shopme.admin.FileUploadUtil;
-import com.shopme.admin.user.UserService;
+import com.shopme.admin.category.CategoryNotFoundException;
+import com.shopme.admin.category.CategoryPageInfo;
+import com.shopme.admin.category.CategoryService;
+import com.shopme.admin.category.export.CategoryCsvExporter;
 import com.shopme.common.entity.Category;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -133,6 +140,13 @@ public class CategoryController {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:/categories";
+    }
+
+    @GetMapping("/categories/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        List<Category> categories = categoryService.listCategoriesUsedInForm();
+        CategoryCsvExporter csvExporter = new CategoryCsvExporter();
+        csvExporter.export(categories, response);
     }
 
 }
