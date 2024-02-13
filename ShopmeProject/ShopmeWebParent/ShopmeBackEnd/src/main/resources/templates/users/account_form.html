@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments :: page_head('Your Account Details')"></head>
+<head th:replace="~{fragments :: page_head('Your Account Details')}"></head>
 <body>
 <div class="container-fluid">
-    <div th:replace="navigation :: menu"></div>
+    <div th:replace="~{navigation :: menu}"></div>
 
     <div th:if="${message != null}" class="alert alert-success text-center" th:text="${message}"></div>
 
@@ -80,7 +80,7 @@
         </div>
     </form>
 
-    <div th:replace="fragments :: footer"></div>
+    <div th:replace="~{fragments :: footer}"></div>
 </div>
 
 <script type="text/javascript">
