@@ -27,7 +27,7 @@
             <tr th:each="brand : ${listBrands}">
                 <td th:text="${brand.id}"></td>
                 <td>
-                    <!--                    todo :img-->
+                    <img th:src="@{${brand.logoPath}}" style="width: 100px" class="img-fluid">
                 </td>
                 <td th:text="${brand.name}"></td>
                 <td>
