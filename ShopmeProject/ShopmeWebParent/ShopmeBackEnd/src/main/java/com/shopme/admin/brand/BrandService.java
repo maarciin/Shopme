@@ -26,4 +26,12 @@ public class BrandService {
                 .orElseThrow(() -> new BrandNotFoundException("Could not find any category with ID " + id));
     }
 
+    public void deleteBrand(Integer id) throws BrandNotFoundException {
+        Long countById = brandRepository.countById(id);
+        if (countById == null || countById == 0) {
+            throw new BrandNotFoundException("Could not find any brand with ID " + id);
+        }
+        brandRepository.deleteById(id);
+    }
+
 }
