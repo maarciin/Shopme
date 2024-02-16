@@ -4,6 +4,7 @@ import com.shopme.admin.FileUploadUtil;
 import com.shopme.admin.category.CategoryService;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Category;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -33,8 +34,7 @@ public class BrandController {
     }
 
     @GetMapping("/page/{pageNum}")
-    public String listByPage(@PathVariable int pageNum, Model model, @RequestParam String sortField,
-                             @RequestParam String sortDir, @RequestParam(required = false) String keyword) {
+    public String listByPage(@PathVariable int pageNum, Model model, @RequestParam String sortField, @RequestParam String sortDir, @RequestParam(required = false) String keyword) {
         Page<Brand> page = brandService.listByPage(pageNum, sortField, sortDir, keyword);
         List<Brand> listBrands = page.getContent();
 
@@ -73,8 +73,7 @@ public class BrandController {
     }
 
     @PostMapping("/save")
-    public String createNewBrand(Brand brandToSave, @RequestParam MultipartFile fileImage,
-                                 RedirectAttributes redirectAttributes) throws IOException {
+    public String createNewBrand(Brand brandToSave, @RequestParam MultipartFile fileImage, RedirectAttributes redirectAttributes) throws IOException {
 
         if (!fileImage.isEmpty()) {
             String fileName = StringUtils.cleanPath(fileImage.getOriginalFilename());
@@ -121,6 +120,13 @@ public class BrandController {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:/brands";
+    }
+
+    @GetMapping("/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        List<Brand> brands = brandService.findAll();
+        BrandCsvExporter csvExporter = new BrandCsvExporter();
+        csvExporter.export(brands, response);
     }
 
 }
