@@ -40,6 +40,15 @@ public class Brand {
         this.logo = logo;
     }
 
+    public Brand(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Brand(String name) {
+        this.name = name;
+    }
+
     @Transient
     public String getLogoPath() {
         if(this.id == null) {

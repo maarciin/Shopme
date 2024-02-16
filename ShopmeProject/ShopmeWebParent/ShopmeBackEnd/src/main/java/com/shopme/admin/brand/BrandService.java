@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,6 +33,17 @@ public class BrandService {
             throw new BrandNotFoundException("Could not find any brand with ID " + id);
         }
         brandRepository.deleteById(id);
+    }
+
+    public boolean isBrandUnique(Integer id, String name) {
+        Optional<Brand> brand = brandRepository.findByName(name);
+        if (brand.isEmpty()) return true;
+
+        if (id == null) {
+            return false;
+        } else {
+            return Objects.equals(brand.get().getId(), id);
+        }
     }
 
 }
