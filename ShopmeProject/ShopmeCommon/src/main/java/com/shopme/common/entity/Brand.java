@@ -13,7 +13,6 @@ import java.util.Set;
 @Table(name = "brands")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class Brand {
 
@@ -29,7 +28,7 @@ public class Brand {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "brand_categories",
+            name = "brands_categories",
             joinColumns = @JoinColumn(name = "brand_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
@@ -55,5 +54,13 @@ public class Brand {
             return "/images/image-thumbnail.png";
         }
         return "/brand-logos/" + this.id + "/" + this.logo;
+    }
+
+    @Override
+    public String toString() {
+        return "Brand{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

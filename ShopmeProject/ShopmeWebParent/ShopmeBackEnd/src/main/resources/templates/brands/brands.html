@@ -18,7 +18,7 @@
             <tr>
                 <th>Brand ID</th>
                 <th>Logo</th>
-                <th>Brand Name</th>
+                <th th:replace="~{fragments :: column_link('/brands', 'name', 'Brand Name', 'none')}">
                 <th>Categories</th>
                 <th></th>
             </tr>
@@ -65,13 +65,7 @@
     <!--        </div>-->
     <!--    </div>-->
 
-    <!--    <div th:if="${keyword != null}" th:class="text-center">-->
-    <!--        <div th:replace="~{fragments :: pagination('/brands', 'brands')}"></div>-->
-    <!--    </div>-->
-
-    <!--    <div th:unless="${keyword != null}">-->
-    <!--        <div th:replace="~{fragments :: pagination('/brands', 'top-level categories')}"></div>-->
-    <!--    </div>-->
+    <div th:replace="~{fragments :: pagination('/brands', 'brands')}"></div>
 
     <div th:replace="~{modal_fragments :: confirm_modal}"></div>
 
