@@ -1,6 +1,7 @@
 package com.shopme.admin.product;
 
 import com.shopme.common.entity.Product;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -44,5 +46,9 @@ public class ProductService {
         } else {
             return Objects.equals(product.get().getId(), id);
         }
+    }
+
+    public void updateProductEnabledStatus(Integer id, boolean status) {
+        productRepository.updateEnabledStatus(id, status);
     }
 }
