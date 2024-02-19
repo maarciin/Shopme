@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-</head>
 <body>
 
 <div th:fragment="content" th:remove="tag">
@@ -17,7 +16,7 @@
         <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{alias}"
                    placeholder="Default is product name (spaces are replaced with dashes)"
-                   minlength="3" maxlength="256" />
+                   minlength="3" maxlength="256"/>
         </div>
     </div>
 
@@ -36,7 +35,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Category:</label>
         <div class="col-sm-10">
-            <select th:field="*{category}" class="form-control" >
+            <select th:field="*{category}" class="form-control">
 
             </select>
         </div>
