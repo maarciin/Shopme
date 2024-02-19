@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BrandRepository extends PagingAndSortingRepository<Brand, Integer>, CrudRepository<Brand, Integer> {
@@ -17,4 +18,7 @@ public interface BrandRepository extends PagingAndSortingRepository<Brand, Integ
 
     @Query("SELECT b FROM Brand b WHERE b.name like %?1%")
     Page<Brand> search(String keyword, Pageable pageable);
+
+    @Query("SELECT NEW Brand(b.id, b.name) FROM Brand b ORDER BY b.name ASC")
+    List<Brand> findAll();
 }

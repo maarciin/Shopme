@@ -20,8 +20,8 @@ public class BrandService {
 
     private final BrandRepository brandRepository;
 
-    public List<Brand> findAll() {
-        return (List<Brand>) brandRepository.findAll();
+    public List<Brand> listAll() {
+        return brandRepository.findAll();
     }
 
     public Page<Brand> listByPage(int pageNum, String sortField, String sortDir, String keyword) {
