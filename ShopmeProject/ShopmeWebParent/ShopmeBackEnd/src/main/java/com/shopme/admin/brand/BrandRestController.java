@@ -15,7 +15,7 @@ public class BrandRestController {
 
     private final BrandService brandService;
 
-    @PostMapping("/brands/check_email")
+    @PostMapping("/brands/check_unique")
     public String checkDuplicateBrand(@RequestParam(required = false) Integer id, @RequestParam String name) {
         return brandService.isBrandUnique(id, name) ? "OK" : "Duplicated";
     }

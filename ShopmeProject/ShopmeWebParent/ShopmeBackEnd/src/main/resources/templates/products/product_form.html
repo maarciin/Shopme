@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <head th:replace="~{fragments :: page_head(${pageTitle}, 'tag')}"></head>
-        <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
-        <script th:src="@{/richtext/jquery.richtext.min.js}"></script>
-    </head>
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
+    <script th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
 <body>
 <div class="container-fluid">
     <div th:replace="~{navigation :: menu}"></div>
@@ -12,7 +12,8 @@
         <h2>Manage Products | [[${pageTitle}]]</h2>
     </div>
     <form th:action="@{/products/save}" method="post"
-          th:object="${product}">
+          th:object="${product}"
+          onsubmit="return checkProductUnique(this)">
 
         <div>
             <!-- Nav tabs -->
@@ -91,6 +92,27 @@
                 $("<option>").val(category.id).text(category.name).appendTo(dropdownCategories);
             });
         });
+    }
+
+    function checkProductUnique(form) {
+        url = "[[@{/products/check_unique}]]";
+        productName = $("#name").val();
+        productId = $("#id").val();
+        csrfValue = $("input[name='_csrf']").val();
+        params = {id: productId, name: productName, _csrf: csrfValue};
+
+        $.post(url, params, function (response) {
+            if (response == "OK") {
+                form.submit();
+            } else if (response == "Duplicated") {
+                showWarningModal("There is another product having the name " + productName);
+            } else {
+                showErrorModal("Unknown response from server");
+            }
+        }).fail(function () {
+            showErrorModal("Could not connect to the server");
+        });
+        return false;
     }
 
 </script>

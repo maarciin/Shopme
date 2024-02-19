@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +33,16 @@ public class ProductService {
 
         product.setUpdatedTime(new Date());
         return productRepository.save(product);
+    }
+
+    public boolean isProductUnique(Integer id, String name) {
+        Optional<Product> product = productRepository.findByName(name);
+        if (product.isEmpty()) return true;
+
+        if (id == null) {
+            return false;
+        } else {
+            return Objects.equals(product.get().getId(), id);
+        }
     }
 }
