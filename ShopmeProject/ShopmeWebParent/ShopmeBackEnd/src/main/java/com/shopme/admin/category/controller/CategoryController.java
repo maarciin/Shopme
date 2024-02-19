@@ -134,7 +134,7 @@ public class CategoryController {
             categoryService.deleteCategory(id);
             String categoryDir = "../category-images/" + id;
             FileUploadUtil.removeDir(categoryDir);
-            String message = "Category with ID " + id + " has benn deleted successfully.";
+            String message = "Category with ID " + id + " has been deleted successfully.";
             redirectAttributes.addFlashAttribute("message", message);
         } catch (CategoryNotFoundException e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
