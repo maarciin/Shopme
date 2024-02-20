@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -47,6 +49,9 @@ public class Product {
     private float height;
     private float weight;
 
+    @Column(nullable = false)
+    private String mainImage;
+
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
@@ -55,6 +60,9 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private Set<ProductImage> images = new HashSet<>();
+
     @Override
     public String toString() {
         return "Product{" +
@@ -62,5 +70,9 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
                 '}';
+    }
+
+    public void addExtraImage(String image) {
+        this.images.add(new ProductImage(image, this));
     }
 }
