@@ -75,4 +75,10 @@ public class Product {
     public void addExtraImage(String image) {
         this.images.add(new ProductImage(image, this));
     }
+
+    @Transient
+    public String getMainImagePath() {
+        if (id == null || mainImage == null) return "/images/image-thumbnail.png";
+        return "/product-images/" + this.id + "/" + this.mainImage;
+    }
 }
