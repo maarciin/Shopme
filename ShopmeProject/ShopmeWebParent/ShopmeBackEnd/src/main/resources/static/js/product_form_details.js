@@ -1,3 +1,15 @@
+$(document).ready(function () {
+    $("a[name='linkRemoveDetail']").each(function (index) {
+        $(this).click(function () {
+            removeDetailSectionByIndex(index);
+        });
+    });
+});
+
+function removeDetailSectionByIndex(index) {
+    $("#divDetail" + index).remove();
+}
+
 function addNextDetailSection() {
 
     allDivDetails = $("[id^='divDetail']");

@@ -59,4 +59,9 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    public Product getById(Integer id) throws ProductNotFoundException {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Could not find any product with ID " + id));
+    }
 }

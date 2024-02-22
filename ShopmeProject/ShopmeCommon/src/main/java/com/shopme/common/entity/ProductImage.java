@@ -25,4 +25,9 @@ public class ProductImage {
         this.name = name;
         this.product = product;
     }
+
+    @Transient
+    public String getImagePath() {
+        return String.format("/product-images/%d/extras/%s", product.getId(), this.name);
+    }
 }
