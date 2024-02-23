@@ -4,7 +4,10 @@ import com.shopme.admin.FileUploadUtil;
 import com.shopme.admin.brand.BrandService;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
+import com.shopme.common.entity.ProductImage;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -13,12 +16,19 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductService productService;
     private final BrandService brandService;
@@ -48,17 +58,59 @@ public class ProductController {
     public String saveProduct(Product productToSave, RedirectAttributes redirectAttributes,
                               @RequestParam(name = "fileImage") MultipartFile mainImage,
                               @RequestParam(name = "extraImage") MultipartFile[] extraImages,
-                              @RequestParam(name = "detailNames", required = false) String[] detailNames,
-                              @RequestParam(name = "detailValues", required = false) String[] detailValues) throws IOException {
+                              @RequestParam(required = false) String[] detailNames,
+                              @RequestParam(required = false) String[] detailIds,
+                              @RequestParam(required = false) String[] detailValues,
+                              @RequestParam(required = false) String[] imageIds,
+                              @RequestParam(required = false) String[] imageNames) throws IOException {
         setMainImageName(mainImage, productToSave);
-        setExtraImageNames(extraImages, productToSave);
-        setProductDetails(detailNames, detailValues, productToSave);
+        setExistingExtraImageNames(imageIds, imageNames, productToSave);
+        setNewExtraImageNames(extraImages, productToSave);
+        setProductDetails(detailIds, detailNames, detailValues, productToSave);
 
         Product savedProduct = productService.save(productToSave);
         saveUploadedImages(mainImage, extraImages, savedProduct);
 
+        deleteExtraImagesRemovedOnForm(productToSave);
+
         redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
         return "redirect:/products";
+    }
+
+    private void deleteExtraImagesRemovedOnForm(Product product) {
+        String extraImageDir = "../product-images/" + product.getId() + "/extras";
+        Path dirpath = Paths.get(extraImageDir);
+
+        try {
+            Files.list(dirpath).forEach(file -> {
+                String filename = file.toFile().getName();
+
+                if (!product.containsImageName(filename)) {
+                    try {
+                        Files.delete(file);
+                        LOGGER.error("Deleted extra image: " + filename);
+                    } catch (IOException e) {
+                        LOGGER.error("Could not delete extra image: " + filename);
+                    }
+                }
+            });
+        } catch (IOException e) {
+            LOGGER.error("Could not list directory: " + dirpath);
+        }
+
+    }
+
+    private void setExistingExtraImageNames(String[] imageIds, String[] imageNames, Product product) {
+        if (imageIds == null || imageIds.length == 0) return;
+
+        Set<ProductImage> images = new HashSet<>();
+        for (int i = 0; i < imageIds.length; i++) {
+            Integer id = Integer.parseInt(imageIds[i]);
+            String name = imageNames[i];
+            images.add(new ProductImage(id, name, product));
+        }
+
+        product.setImages(images);
     }
 
     private void saveUploadedImages(MultipartFile mainImage, MultipartFile[] extraImages, Product product) throws IOException {
@@ -89,24 +141,29 @@ public class ProductController {
         }
     }
 
-    private void setExtraImageNames(MultipartFile[] extraImages, Product product) {
+    private void setNewExtraImageNames(MultipartFile[] extraImages, Product product) {
         if (extraImages.length > 0) {
             for (MultipartFile file : extraImages) {
                 if (!file.isEmpty()) {
                     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-                    product.addExtraImage(fileName);
+                    if (!product.containsImageName(fileName)) {
+                        product.addExtraImage(fileName);
+                    }
                 }
             }
         }
     }
 
-    private void setProductDetails(String[] detailNames, String[] detailValues, Product productToSave) {
+    private void setProductDetails(String[] detailsIds, String[] detailNames, String[] detailValues, Product productToSave) {
         if (detailNames == null || detailNames.length == 0) return;
 
         for (int i = 0; i < detailNames.length; i++) {
             String name = detailNames[i];
             String value = detailValues[i];
-            if (!name.isEmpty() && !value.isEmpty()) {
+            int id = Integer.parseInt(detailsIds[i]);
+            if (id != 0) {
+                productToSave.addDetail(id, name, value);
+            } else if (!name.isEmpty() && !value.isEmpty()) {
                 productToSave.addDetail(name, value);
             }
         }

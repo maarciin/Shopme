@@ -28,14 +28,17 @@
                        title="Remove this image"></a>
                 </div>
                 <div class="m-2">
-                    <img th:alt="'Extra Image #' + ${status.index + 1} + ' preview'" th:id="'extraThumbnail' + ${status.index}" class="img-fluid"
+                    <img th:alt="'Extra Image #' + ${status.index + 1} + ' preview'"
+                         th:id="'extraThumbnail' + ${status.index}" class="img-fluid"
                          th:src="@{${productImage.imagePath}}">
                 </div>
                 <div>
                     <input type="file" name="extraImage" accept="image/png, image/jpeg">
                 </div>
-                <input type="hidden" name="imageIds" th:id="'imageId' + ${status.index}">
-                <input type="hidden" name="imageNames" th:id="'imageName' + ${status.index}">
+                <input type="hidden" name="imageIds" th:id="'imageId' + ${status.index}"
+                       th:value="${productImage.id}">
+                <input type="hidden" name="imageNames" th:id="'imageName' + ${status.index}"
+                       th:value="${productImage.name}">
             </div>
         </th:block>
 
@@ -44,7 +47,8 @@
                 <label>Extra Image #[[${numberOfExistingExtraImages + 1}]]:</label>
             </div>
             <div class="m-2">
-                <img th:alt="'Extra Image #' + ${numberOfExistingExtraImages} + ' preview'" th:id="'extraThumbnail' + ${numberOfExistingExtraImages}" class="img-fluid"
+                <img th:alt="'Extra Image #' + ${numberOfExistingExtraImages} + ' preview'"
+                     th:id="'extraThumbnail' + ${numberOfExistingExtraImages}" class="img-fluid"
                      th:src="@{/images/image-thumbnail.png}">
             </div>
             <div>
