@@ -3,6 +3,10 @@ package com.shopme.admin.product;
 import com.shopme.common.entity.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,10 +19,23 @@ import java.util.Optional;
 @Transactional
 public class ProductService {
 
+    public static final int PRODUCTS_PER_PAGE = 5;
     private final ProductRepository productRepository;
 
     public List<Product> listAll() {
         return (List<Product>) productRepository.findAll();
+    }
+
+    public Page<Product> listByPage(int pageNum, String sortField, String sortDir, String keyword) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(pageNum - 1, PRODUCTS_PER_PAGE, sort);
+
+        if (keyword != null) {
+            return productRepository.findAll(keyword, pageable);
+        }
+
+        return productRepository.findAll(pageable);
     }
 
     public Product save(Product product) {

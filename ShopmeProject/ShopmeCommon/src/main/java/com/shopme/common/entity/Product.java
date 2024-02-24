@@ -24,7 +24,7 @@ public class Product {
     @Column(length = 256, unique = true, nullable = false)
     private String alias;
 
-    @Column(length = 512, nullable = false)
+    @Column(length = 700, nullable = false)
     private String shortDescription;
 
     @Column(length = 4096, nullable = false)
@@ -98,5 +98,13 @@ public class Product {
             }
         }
         return false;
+    }
+
+    @Transient
+    public String getShortName() {
+        if (name.length() > 70) {
+            return name.substring(0, 70).concat("...");
+        }
+        return name;
     }
 }
