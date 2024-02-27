@@ -22,3 +22,13 @@
     div.less-details {display: none}
     .hideable-column {display: table-cell}
 }
+
+.nav-tabs .nav-link.active {
+    font-weight: bold; /* Sprawia, że tekst aktywnej zakładki jest pogrubiony */
+    background-color: #f0f0f0; /* Zmienia tło aktywnej zakładki */
+}
+
+.nav-tabs .nav-item {
+    min-width: 20%; /* Ustawia minimalną szerokość dla każdej zakładki */
+    text-align: center; /* Opcjonalnie, aby wyśrodkować tekst */
+}

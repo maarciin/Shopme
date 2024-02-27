@@ -2,7 +2,9 @@ package com.shopme.admin.product;
 
 import com.shopme.admin.FileUploadUtil;
 import com.shopme.admin.brand.BrandService;
+import com.shopme.admin.category.CategoryService;
 import com.shopme.common.entity.Brand;
+import com.shopme.common.entity.Category;
 import com.shopme.common.entity.Product;
 import com.shopme.common.entity.ProductImage;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +37,19 @@ public class ProductController {
 
     private final ProductService productService;
     private final BrandService brandService;
+    private final CategoryService categoryService;
 
     @GetMapping
     public String listAll(Model model) {
-        return listByPage(1, model, "name", ASCENDING_ORDER, null);
+        return listByPage(1, model, "name", ASCENDING_ORDER, null, 0);
     }
 
     @GetMapping("/page/{pageNum}")
     public String listByPage(@PathVariable int pageNum, Model model, @RequestParam String sortField,
-                             @RequestParam String sortDir, @RequestParam(required = false) String keyword) {
-        Page<Product> page = productService.listByPage(pageNum, sortField, sortDir, keyword);
+                             @RequestParam String sortDir, @RequestParam(required = false) String keyword,
+                             @RequestParam(required = false) Integer categoryId) {
+        System.out.println("selected category id: " + categoryId);
+        Page<Product> page = productService.listByPage(pageNum, sortField, sortDir, keyword, categoryId);
         List<Product> listProducts = page.getContent();
 
         long startCount = (pageNum - 1) * ProductService.PRODUCTS_PER_PAGE + 1;
@@ -56,6 +61,12 @@ public class ProductController {
 
         String reversedSortDir = sortDir.equals(ASCENDING_ORDER) ? DESCENDING_ORDER : ASCENDING_ORDER;
 
+        List<Category> listCategories = categoryService.listCategoriesUsedInForm();
+
+        if (categoryId != null) {
+            model.addAttribute("categoryId", categoryId);
+        }
+
         model.addAttribute("currentPage", pageNum);
         model.addAttribute("startCount", startCount);
         model.addAttribute("endCount", endCount);
@@ -66,6 +77,7 @@ public class ProductController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reversedSortDir", reversedSortDir);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("listCategories", listCategories);
 
         return "products/products";
     }
@@ -80,6 +92,7 @@ public class ProductController {
         model.addAttribute("listBrands", listBrands);
         model.addAttribute("product", product);
         model.addAttribute("pageTitle", "Create New Product");
+        model.addAttribute("numberOfExistingExtraImages", 0);
 
         return "products/product_form";
     }
