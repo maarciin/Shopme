@@ -3,6 +3,7 @@ package com.shopme.admin.product;
 import com.shopme.admin.FileUploadUtil;
 import com.shopme.admin.brand.BrandService;
 import com.shopme.admin.category.CategoryService;
+import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.Product;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -99,13 +101,20 @@ public class ProductController {
 
     @PostMapping("/save")
     public String saveProduct(Product productToSave, RedirectAttributes redirectAttributes,
-                              @RequestParam(name = "fileImage") MultipartFile mainImage,
-                              @RequestParam(name = "extraImage") MultipartFile[] extraImages,
+                              @RequestParam(name = "fileImage", required = false) MultipartFile mainImage,
+                              @RequestParam(name = "extraImage", required = false) MultipartFile[] extraImages,
                               @RequestParam(required = false) String[] detailNames,
                               @RequestParam(required = false) String[] detailIds,
                               @RequestParam(required = false) String[] detailValues,
                               @RequestParam(required = false) String[] imageIds,
-                              @RequestParam(required = false) String[] imageNames) throws IOException {
+                              @RequestParam(required = false) String[] imageNames,
+                              @AuthenticationPrincipal ShopmeUserDetails loggedUser) throws IOException {
+        if (loggedUser.hasRole("Salesperson")) {
+            productService.saveProductPrice(productToSave);
+            redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
+            return "redirect:/products";
+        }
+
         setMainImageName(mainImage, productToSave);
         setExistingExtraImageNames(imageIds, imageNames, productToSave);
         setNewExtraImageNames(extraImages, productToSave);

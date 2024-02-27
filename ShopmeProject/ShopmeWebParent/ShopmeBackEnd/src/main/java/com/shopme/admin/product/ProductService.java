@@ -61,6 +61,18 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public void saveProductPrice(Product productInForm) {
+        productRepository.findById(productInForm.getId())
+                .ifPresentOrElse(p -> {
+                            p.setCost(productInForm.getCost());
+                            p.setPrice(productInForm.getPrice());
+                            p.setDiscountPercent(productInForm.getDiscountPercent());
+                            productRepository.save(p);
+                        },
+                        () -> new ProductNotFoundException("Could not find any product with ID " + productInForm.getId())
+                );
+    }
+
     public boolean isProductUnique(Integer id, String name) {
         Optional<Product> product = productRepository.findByName(name);
         if (product.isEmpty()) return true;
