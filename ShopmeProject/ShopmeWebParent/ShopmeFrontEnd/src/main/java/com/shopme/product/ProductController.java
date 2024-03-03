@@ -1,9 +1,10 @@
 package com.shopme.product;
 
-import com.shopme.category.CategoryNotFoundException;
 import com.shopme.category.CategoryService;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.Product;
+import com.shopme.common.exception.CategoryNotFoundException;
+import com.shopme.common.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -15,19 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/c")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final CategoryService categoryService;
     private final ProductService productService;
 
-    @GetMapping("/{alias}")
+    @GetMapping("/c/{alias}")
     public String viewCategoryFirstPage(@PathVariable String alias, Model model) {
         return viewCategoryByPage(alias, 1, model);
     }
 
-    @GetMapping("/{alias}/page/{pageNum}")
+    @GetMapping("/c/{alias}/page/{pageNum}")
     public String viewCategoryByPage(@PathVariable String alias, @PathVariable int pageNum, Model model) {
         try {
             Category category = categoryService.getCategory(alias);
@@ -53,11 +53,26 @@ public class ProductController {
             model.addAttribute("listProducts", listProducts);
             model.addAttribute("category", category);
 
-            return "products_by_category";
+            return "product/products_by_category";
         } catch (CategoryNotFoundException e) {
             return "error/404";
         }
+    }
 
+    @GetMapping("/p/{product_alias}")
+    public String viewProductDetail(@PathVariable("product_alias") String alias, Model model) {
+        try {
+            Product product = productService.getByAlias(alias);
+            List<Category> listCategoryParents = categoryService.getCategoryParents(product.getCategory());
+
+            model.addAttribute("listCategoryParents", listCategoryParents);
+            model.addAttribute("product", product);
+            model.addAttribute("pageTitle", product.getShortName());
+
+            return "product/product_detail";
+        } catch (ProductNotFoundException e) {
+            return "error/404";
+        }
     }
 
 }

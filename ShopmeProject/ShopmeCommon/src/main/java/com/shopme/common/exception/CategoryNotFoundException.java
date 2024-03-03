@@ -1,7 +1,7 @@
-package com.shopme.admin.category;
+package com.shopme.common.exception;
 
 public class CategoryNotFoundException extends Exception {
-    CategoryNotFoundException(String message) {
+    public CategoryNotFoundException(String message) {
         super(message);
     }
 }

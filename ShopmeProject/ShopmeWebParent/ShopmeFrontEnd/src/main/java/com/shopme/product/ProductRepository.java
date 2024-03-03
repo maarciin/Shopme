@@ -7,10 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Optional;
+
 public interface ProductRepository extends PagingAndSortingRepository<Product, Integer>, CrudRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.enabled = true AND " +
             "(p.category.id = ?1 OR p.category.allParentIds LIKE CONCAT('%-', ?1, '-%'))" +
             " ORDER BY p.name")
     Page<Product> listByCategory(Integer categoryId, Pageable pageable);
+
+    Optional<Product> findByAlias(String alias);
 }
