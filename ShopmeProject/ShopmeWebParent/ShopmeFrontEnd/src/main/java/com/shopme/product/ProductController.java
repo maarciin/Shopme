@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -73,6 +73,35 @@ public class ProductController {
         } catch (ProductNotFoundException e) {
             return "error/404";
         }
+    }
+
+    @GetMapping("/search")
+    public String searchFirstPage(@RequestParam String keyword, Model model) {
+        return searchByPage(keyword, 1, model);
+    }
+
+    @GetMapping("/search/page/{pageNum}")
+    public String searchByPage(@RequestParam String keyword, @PathVariable int pageNum, Model model) {
+
+        Page<Product> pageProducts = productService.search(keyword, pageNum);
+        List<Product> listResult = pageProducts.getContent();
+
+        long startCount = (pageNum - 1) * ProductService.SEARCH_RESULTS_PER_PAGE + 1;
+        long endCount = startCount + ProductService.SEARCH_RESULTS_PER_PAGE - 1;
+
+        if (endCount > pageProducts.getTotalElements()) {
+            endCount = pageProducts.getTotalElements();
+        }
+
+        model.addAttribute("currentPage", pageNum);
+        model.addAttribute("startCount", startCount);
+        model.addAttribute("endCount", endCount);
+        model.addAttribute("totalItems", pageProducts.getTotalElements());
+        model.addAttribute("totalPages", pageProducts.getTotalPages());
+        model.addAttribute("pageTitle", keyword + " - Search Result");
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("listResult", listResult);
+        return "product/search_result";
     }
 
 }
