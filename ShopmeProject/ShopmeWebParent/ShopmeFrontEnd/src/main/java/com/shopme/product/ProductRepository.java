@@ -18,6 +18,7 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, I
 
     Optional<Product> findByAlias(String alias);
 
+    //full text search - with MATCH() AGAINST - index created in products table (name,short_description,full_description)
     @Query(value = "SELECT * FROM products WHERE enabled = true AND " +
             "MATCH(name, short_description, full_description) AGAINST (?1)",
             nativeQuery = true)
