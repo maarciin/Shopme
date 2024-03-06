@@ -1,10 +1,7 @@
 package com.shopme.common.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "settings")
@@ -12,10 +9,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Setting {
 
     @Id
     @Column(name = "`key`", nullable = false, length = 128)
+    @EqualsAndHashCode.Include
     private String key;
 
     @Column(nullable = false, length = 1024)
@@ -25,4 +25,7 @@ public class Setting {
     @Column(nullable = false, length = 45)
     private SettingCategory category;
 
+    public Setting(String key) {
+        this.key = key;
+    }
 }

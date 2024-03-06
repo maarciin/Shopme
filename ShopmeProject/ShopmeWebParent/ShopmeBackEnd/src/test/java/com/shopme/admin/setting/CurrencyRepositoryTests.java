@@ -37,4 +37,15 @@ public class CurrencyRepositoryTests {
         assertThat(allCurrencies).size().isEqualTo(6);
     }
 
+    @Test
+    public void testFindAllByOrderByNameAsc() {
+        //given
+        //when
+        List<Currency> currencies = repository.findAllByOrderByName();
+
+        //then
+        currencies.forEach(System.out::println);
+        assertThat(currencies).size().isEqualTo(6);
+    }
+
 }

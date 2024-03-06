@@ -1,10 +1,7 @@
 package com.shopme.common.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "currencies")
@@ -30,5 +27,10 @@ public class Currency {
         this.name = name;
         this.symbol = symbol;
         this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - " + code + " - " + symbol;
     }
 }

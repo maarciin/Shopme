@@ -38,5 +38,18 @@ public class SettingRepositoryTests {
         assertThat(allSettings).size().isGreaterThan(0);
     }
 
+    @Test
+    public void testListSettingsByCategory() {
+        //given
+        SettingCategory generalCategory = SettingCategory.GENERAL;
+
+        //when
+        List<Setting> categories = settingRepository.findByCategory(generalCategory);
+
+        //then
+        categories.forEach(System.out::println);
+        assertThat(categories.size()).isGreaterThan(0);
+
+    }
 
 }
