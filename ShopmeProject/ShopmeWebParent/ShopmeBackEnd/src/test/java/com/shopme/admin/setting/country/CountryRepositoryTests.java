@@ -1,0 +1,42 @@
+package com.shopme.admin.setting.country;
+
+import com.shopme.common.entity.Country;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.Rollback;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Rollback(value = false)
+public class CountryRepositoryTests {
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+    @Test
+    public void testCreateCountry() {
+        //given
+        Country country = new Country("Poland", "PL");
+
+        //when
+        Country savedCountry = countryRepository.save(country);
+
+        //then
+        assertThat(savedCountry).isNotNull();
+        assertThat(savedCountry.getId()).isGreaterThan(0);
+    }
+
+    @Test
+    public void testListCountries() {
+        List<Country> listCountries = countryRepository.findAllByOrderByName();
+        listCountries.forEach(System.out::println);
+
+        assertThat(listCountries.size()).isGreaterThan(0);
+    }
+}
