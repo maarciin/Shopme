@@ -18,8 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rollback(value = false)
 public class StateRepositoryTests {
 
-    @Autowired private StateRepository repo;
-    @Autowired private TestEntityManager entityManager;
+    @Autowired
+    private StateRepository repo;
+    @Autowired
+    private TestEntityManager entityManager;
 
     @Test
     public void testCreateStatesInIndia() {
@@ -59,7 +61,5 @@ public class StateRepositoryTests {
 
         assertThat(listStates.size()).isGreaterThan(0);
     }
-
-
 
 }
