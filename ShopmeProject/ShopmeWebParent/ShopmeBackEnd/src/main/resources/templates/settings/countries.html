@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="content" th:remove="tag">
-   <div>
-       <p>
-           Use this page to manage countries which will be displayed tin the customer registration form.
-           Click Load Country List first.
-       </p>
-   </div>
+    <div>
+        <p>
+            Use this page to manage countries which will be displayed tin the customer registration form.
+            Click Load Country List first.
+        </p>
+    </div>
     <div>
         <input type="button" value="Load Country List" class="btn btn-primary m-2" id="buttonLoadCountries">
     </div>
@@ -27,9 +27,10 @@
             <input type="text" class="form-control mt-2" id="fieldCountryCode">
         </div>
         <div class="col-lg-4 mt-2">
-            <input type="button" id="buttonAddCountry" th:value="New" class="btn btn-secondary mr-2">
-            <input type="button" id="buttonUpdateCountry" th:value="Update" class="btn btn-secondary mr-2" disabled="disabled">
-            <input type="button" id="buttonDeleteCountry" th:value="Delete" class="btn btn-secondary" disabled="disabled">
+            <input type="button" id="buttonAddCountry" value="New" class="btn btn-secondary mr-2">
+            <input type="button" id="buttonUpdateCountry" value="Update" class="btn btn-secondary mr-2"
+                   disabled="disabled">
+            <input type="button" id="buttonDeleteCountry" value="Delete" class="btn btn-secondary" disabled="disabled">
         </div>
     </div>
 </div>
