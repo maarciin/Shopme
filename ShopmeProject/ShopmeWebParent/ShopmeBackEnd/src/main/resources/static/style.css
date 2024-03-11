@@ -29,6 +29,6 @@
 }
 
 .nav-tabs .nav-item {
-    min-width: 20%; /* Ustawia minimalną szerokość dla każdej zakładki */
+    min-width: 16%; /* Ustawia minimalną szerokość dla każdej zakładki */
     text-align: center; /* Opcjonalnie, aby wyśrodkować tekst */
 }
