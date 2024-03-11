@@ -54,8 +54,7 @@ public class StateRepositoryTests {
     @Test
     public void testListStatesByCountry() {
         Integer countryId = 2;
-        Country country = entityManager.find(Country.class, countryId);
-        List<State> listStates = repo.findByCountryOrderByName(country);
+        List<State> listStates = repo.findByCountry_IdOrderByName(countryId);
 
         listStates.forEach(System.out::println);
 

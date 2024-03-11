@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface StateRepository extends JpaRepository<State, Integer> {
 
-    List<State> findByCountryOrderByName(Country country);
+    List<State> findByCountry_IdOrderByName(Integer countryId);
 }
