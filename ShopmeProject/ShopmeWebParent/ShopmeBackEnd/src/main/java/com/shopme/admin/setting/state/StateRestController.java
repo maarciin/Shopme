@@ -1,6 +1,7 @@
 package com.shopme.admin.setting.state;
 
 import com.shopme.common.entity.State;
+import com.shopme.common.entity.StateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

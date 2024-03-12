@@ -1,4 +1,4 @@
-package com.shopme.admin.setting.state;
+package com.shopme.common.entity;
 
 public record StateDto(Integer id, String name) {
 }
