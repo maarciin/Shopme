@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('Customers - Shopme Admin', 'none')}"></head>
+<body>
+<div class="container-fluid">
+    <div th:replace="~{navigation :: menu}"></div>
+
+    <div>
+        <h2>Manage Customers</h2>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center" th:text="${message}">
+    </div>
+
+    <div class="full-details">
+        <table class="table table-bordered table-striped table-hover table-responsive-xl">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>E-mail</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Enabled</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="customer : ${listCustomers}">
+                <td th:text="${customer.id}"></td>
+                <td th:text="${customer.firstName}"></td>
+                <td th:text="${customer.lastName}"></td>
+                <td th:text="${customer.email}"></td>
+                <td th:text="${customer.city}"></td>
+                <td th:text="${customer.state}"></td>
+                <td th:text="${customer.country.name}"></td>
+                <td>
+                    <div th:replace="~{fragments :: status(${customer.enabled}, 'customer', '/customers/' + ${customer.id})}"></div>
+                </td>
+                <td>
+                    <a th:href="@{'/customers/detail/' + ${customer.id}}"
+                       title="View details of this customer"
+                       class="fas fa-file-alt fa-2x icon-green link-detail">
+                    </a>
+                    &nbsp;
+<!--                    <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor', 'Salesperson')">-->
+                    <div th:replace="~{fragments :: edit('customer', '/customers/edit/' + ${customer.id})}"></div>
+<!--                    </th:block>-->
+                    &nbsp;
+<!--                    <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">-->
+                    <div th:replace="~{fragments :: delete('customer', ${customer.id}, '/customers/delete/' + ${customer.id}, true)}"></div>
+<!--                    </th:block>-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="~{modal_fragments :: confirm_modal}"></div>
+
+    <div class="modal fade" id="detailModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+
+
+    <div th:replace="~{fragments :: footer}"></div>
+</div>
+
+<script th:src="@{/js/common_list.js}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function(e) {
+        $(".link-detail").on("click", function(e) {
+           e.preventDefault();
+           linkDetailURL = $(this).attr("href");
+           $("#detailModal").modal("show").find(".modal-content").load(linkDetailURL);
+        });
+
+        $(".link-delete").on("click", function (e) {
+           e.preventDefault();
+           showDeleteConfirmModal($(this), 'customer');
+        });
+    });
+</script>
+
+</body>
+</html>
