@@ -51,4 +51,19 @@ public class CustomerController {
 
         return "redirect:/customers";
     }
+
+    @GetMapping("{id}/enabled/{status}")
+    public String enableCustomer(@PathVariable Integer id, @PathVariable boolean status, RedirectAttributes ra) {
+        try {
+            customerService.updateCustomerEnabledStatus(id, status);
+
+            String enabledDisabled = status ? "enabled" : "disabled";
+            String message = "The customer ID " + id + " has been " + enabledDisabled;
+            ra.addFlashAttribute("message", message);
+        } catch (CustomerNotFoundException e) {
+            ra.addFlashAttribute("message", e.getMessage());
+        }
+
+        return "redirect:/customers";
+    }
 }

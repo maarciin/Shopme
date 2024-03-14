@@ -1,6 +1,7 @@
 package com.shopme.admin.customer;
 
 import com.shopme.common.entity.Customer;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +28,14 @@ public class CustomerService {
             throw new CustomerNotFoundException("Could not find any customer with ID " + id);
         }
         customerRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateCustomerEnabledStatus(Integer id, boolean status) throws CustomerNotFoundException {
+        Long countById = customerRepository.countById(id);
+        if (countById == null || countById == 0) {
+            throw new CustomerNotFoundException("Could not find any customer with ID " + id);
+        }
+        customerRepository.updateEnabledStatus(id, status);
     }
 }
