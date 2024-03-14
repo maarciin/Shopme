@@ -81,4 +81,9 @@ public class Customer {
                 ", verificationCode='" + verificationCode + '\'' +
                 '}';
     }
+
+    @Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

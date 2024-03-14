@@ -17,4 +17,9 @@ public class SettingService {
         return settingRepository.findByTwoCategories(SettingCategory.GENERAL, SettingCategory.CURRENCY);
     }
 
+    public EmailSettingBag getEmailSettings() {
+        List<Setting> settings = settingRepository.findByTwoCategories(SettingCategory.MAIL_SERVER, SettingCategory.MAIL_TEMPLATES);
+        return new EmailSettingBag(settings);
+    }
+
 }
