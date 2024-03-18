@@ -1,11 +1,13 @@
 package com.shopme.admin.customer;
 
+import com.shopme.common.entity.Country;
 import com.shopme.common.entity.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -64,6 +66,30 @@ public class CustomerController {
             ra.addFlashAttribute("message", e.getMessage());
         }
 
+        return "redirect:/customers";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editCustomer(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+        try {
+            Customer customer = customerService.getById(id);
+            List<Country> countries = customerService.listAllCountries();
+
+            model.addAttribute("customer", customer);
+            model.addAttribute("listCountries", countries);
+            model.addAttribute("pageTitle", "Edit Customer (ID: " + id + ")");
+            return "customers/customer_form";
+
+        } catch (CustomerNotFoundException e) {
+            ra.addFlashAttribute("message", e.getMessage());
+            return "redirect:/customers";
+        }
+    }
+
+    @PostMapping("/save")
+    public String saveCustomer(Customer customer, RedirectAttributes ra) {
+        customerService.save(customer);
+        ra.addFlashAttribute("message", "The customer ID " + customer.getId() + " has been updated successfully.");
         return "redirect:/customers";
     }
 }

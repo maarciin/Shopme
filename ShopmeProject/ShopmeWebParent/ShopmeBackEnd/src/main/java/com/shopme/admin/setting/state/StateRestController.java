@@ -13,7 +13,7 @@ public class StateRestController {
 
     private final StateRepository stateRepository;
 
-    @GetMapping("/states/{countryId}")
+    @GetMapping("/statesByCountry/{countryId}")
     public List<StateDto> listByCountry(@PathVariable int countryId) {
         return stateRepository.findByCountry_IdOrderByName(countryId)
                 .stream()
