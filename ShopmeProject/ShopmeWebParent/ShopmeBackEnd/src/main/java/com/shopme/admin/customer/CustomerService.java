@@ -1,17 +1,24 @@
 package com.shopme.admin.customer;
 
+import com.shopme.admin.setting.country.CountryRepository;
+import com.shopme.common.entity.Country;
 import com.shopme.common.entity.Customer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CountryRepository countryRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<Customer> findAll() {
         return customerRepository.findAll();
@@ -37,5 +44,32 @@ public class CustomerService {
             throw new CustomerNotFoundException("Could not find any customer with ID " + id);
         }
         customerRepository.updateEnabledStatus(id, status);
+    }
+
+    public List<Country> listAllCountries() {
+        return countryRepository.findAllByOrderByName();
+    }
+
+    public boolean isEmailUnique(Integer id, String email) {
+        Optional<Customer> customer = customerRepository.findByEmail(email);
+
+        return customer.isEmpty() || Objects.equals(customer.get().getId(), id);
+    }
+
+    public void save(Customer customerInForm) {
+        Customer customerInDB = customerRepository.findById(customerInForm.getId()).get();
+
+        if (!customerInForm.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(customerInForm.getPassword());
+            customerInForm.setPassword(encodedPassword);
+        } else {
+            customerInForm.setPassword(customerInDB.getPassword());
+        }
+
+        customerInForm.setEnabled(customerInDB.isEnabled());
+        customerInForm.setCreatedTime(customerInDB.getCreatedTime());
+        customerInForm.setVerificationCode(customerInDB.getVerificationCode());
+
+        customerRepository.save(customerInForm);
     }
 }
