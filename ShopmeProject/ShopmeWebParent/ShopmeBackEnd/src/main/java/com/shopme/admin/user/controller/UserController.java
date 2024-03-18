@@ -1,6 +1,8 @@
 package com.shopme.admin.user.controller;
 
 import com.shopme.admin.FileUploadUtil;
+import com.shopme.admin.paging.PagingAndSortingHelper;
+import com.shopme.admin.paging.PagingAndSortingParam;
 import com.shopme.admin.user.UserNotFoundException;
 import com.shopme.admin.user.UserService;
 import com.shopme.admin.user.export.UserCsvExporter;
@@ -10,7 +12,6 @@ import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -28,43 +29,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    public final static String ASCENDING_ORDER = "asc";
-    public final static String DESCENDING_ORDER = "desc";
-    public final static String FIRST_NAME_SORT_FIELD = "firstName";
     private final UserService userService;
 
     @GetMapping("/users")
-    public String listAll(Model model) {
-        return listByPage(1, model, FIRST_NAME_SORT_FIELD, ASCENDING_ORDER, null);
+    public String listFirstPage() {
+        return "redirect:/users/page/1?sortField=firstName&sortDir=asc";
     }
 
     @GetMapping("/users/page/{pageNum}")
-    public String listByPage(@PathVariable int pageNum, Model model, @RequestParam String sortField,
-                             @RequestParam String sortDir, @RequestParam(required = false) String keyword) {
+    public String listByPage(@PagingAndSortingParam(listName = "listUsers", moduleURL = "/users") PagingAndSortingHelper helper,
+                             @PathVariable int pageNum) {
 
-        Page<User> page = userService.listByPage(pageNum, sortField, sortDir, keyword);
-        List<User> listUsers = page.getContent();
-
-        long startCount = (pageNum - 1) * UserService.USERS_PER_PAGE + 1;
-        long endCount = startCount + UserService.USERS_PER_PAGE - 1;
-
-        if (endCount > page.getTotalElements()) {
-            endCount = page.getTotalElements();
-        }
-
-        String reversedSortDir = sortDir.equals(ASCENDING_ORDER) ? DESCENDING_ORDER : ASCENDING_ORDER;
-
-        model.addAttribute("currentPage", pageNum);
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-        model.addAttribute("totalItems", page.getTotalElements());
-        model.addAttribute("listUsers", listUsers);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reversedSortDir", reversedSortDir);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("moduleURL", "/users");
+        userService.listByPage(pageNum, helper);
         return "users/users";
     }
 
