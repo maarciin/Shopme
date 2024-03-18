@@ -4,7 +4,6 @@ import com.shopme.common.entity.Country;
 import com.shopme.common.entity.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +50,7 @@ public class CustomerController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("reversedSortDir", sortDir.equals("asc") ? "desc" : "asc");
         model.addAttribute("endCount", endCount);
+        model.addAttribute("moduleURL", "/customers");
 
         return "customers/customers";
     }
@@ -61,7 +61,7 @@ public class CustomerController {
             Customer customer = customerService.getById(id);
             model.addAttribute("customer", customer);
 
-            return "customers/customer_detail_modal";
+            return "customer_detail_modal3";
         } catch (CustomerNotFoundException e) {
             ra.addFlashAttribute("message", e.getMessage());
             return "redirect:/customers";

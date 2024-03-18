@@ -71,6 +71,7 @@ public class ProductController {
         model.addAttribute("reversedSortDir", reversedSortDir);
         model.addAttribute("keyword", keyword);
         model.addAttribute("listCategories", listCategories);
+        model.addAttribute("moduleURL", "/products");
 
         return "products/products";
     }
@@ -120,8 +121,6 @@ public class ProductController {
         return "redirect:/products";
     }
 
-
-
     @GetMapping("/{id}/enabled/{status}")
     public String updateProductEnabledStatus(@PathVariable Integer id, @PathVariable boolean status,
                                              RedirectAttributes redirectAttributes) {
@@ -152,12 +151,24 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editProduct(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
+    public String editProduct(@PathVariable Integer id,
+                              Model model,
+                              RedirectAttributes redirectAttributes,
+                              @AuthenticationPrincipal ShopmeUserDetails loggedUser) {
         try {
             Product product = productService.getById(id);
             List<Brand> listBrands = brandService.listAll();
             Integer numberOfExistingExtraImages = product.getImages().size();
 
+            boolean isReadOnlyForSalesperson = false;
+
+            if (!loggedUser.hasRole("Admin") && !loggedUser.hasRole("Editor")) {
+                if (loggedUser.hasRole("Salesperson")) {
+                    isReadOnlyForSalesperson = true;
+                }
+            }
+
+            model.addAttribute("isReadOnlyForSalesperson", isReadOnlyForSalesperson);
             model.addAttribute("product", product);
             model.addAttribute("listBrands", listBrands);
             model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
