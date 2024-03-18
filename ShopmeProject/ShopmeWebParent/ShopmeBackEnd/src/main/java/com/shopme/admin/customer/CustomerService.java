@@ -5,6 +5,10 @@ import com.shopme.common.entity.Country;
 import com.shopme.common.entity.Customer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +20,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerService {
 
+    public static final int CUSTOMERS_PER_PAGE = 10;
+
     private final CustomerRepository customerRepository;
     private final CountryRepository countryRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<Customer> findAll() {
         return customerRepository.findAll();
+    }
+
+    public Page<Customer> listByPage(int pageNum, String sortField, String sortDir, String keyword) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(pageNum - 1, CUSTOMERS_PER_PAGE, sort);
+
+        if (keyword != null) {
+            return customerRepository.findAll(keyword, pageable);
+        }
+
+        return customerRepository.findAll(pageable);
     }
 
     public Customer getById(Integer id) throws CustomerNotFoundException {
