@@ -3,13 +3,14 @@ package com.shopme.admin.product;
 import com.shopme.admin.FileUploadUtil;
 import com.shopme.admin.brand.BrandService;
 import com.shopme.admin.category.CategoryService;
+import com.shopme.admin.paging.PagingAndSortingHelper;
+import com.shopme.admin.paging.PagingAndSortingParam;
 import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.Product;
 import com.shopme.common.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,34 +26,20 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    public final static String ASCENDING_ORDER = "asc";
-    public final static String DESCENDING_ORDER = "desc";
-
     private final ProductService productService;
     private final BrandService brandService;
     private final CategoryService categoryService;
 
     @GetMapping
-    public String listAll(Model model) {
-        return listByPage(1, model, "name", ASCENDING_ORDER, null, 0);
+    public String listAll() {
+        return "redirect:/products/page/1?sortField=name&sortDir=asc&categoryId=0";
     }
 
     @GetMapping("/page/{pageNum}")
-    public String listByPage(@PathVariable int pageNum, Model model, @RequestParam String sortField,
-                             @RequestParam String sortDir, @RequestParam(required = false) String keyword,
+    public String listByPage(@PagingAndSortingParam(listName = "listProducts", moduleURL = "/products") PagingAndSortingHelper helper,
+                             @PathVariable int pageNum, Model model,
                              @RequestParam(required = false) Integer categoryId) {
-        System.out.println("selected category id: " + categoryId);
-        Page<Product> page = productService.listByPage(pageNum, sortField, sortDir, keyword, categoryId);
-        List<Product> listProducts = page.getContent();
-
-        long startCount = (pageNum - 1) * ProductService.PRODUCTS_PER_PAGE + 1;
-        long endCount = startCount + ProductService.PRODUCTS_PER_PAGE - 1;
-
-        if (endCount > page.getTotalElements()) {
-            endCount = page.getTotalElements();
-        }
-
-        String reversedSortDir = sortDir.equals(ASCENDING_ORDER) ? DESCENDING_ORDER : ASCENDING_ORDER;
+        productService.listByPage(pageNum, helper, categoryId);
 
         List<Category> listCategories = categoryService.listCategoriesUsedInForm();
 
@@ -60,16 +47,6 @@ public class ProductController {
             model.addAttribute("categoryId", categoryId);
         }
 
-        model.addAttribute("currentPage", pageNum);
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-        model.addAttribute("totalItems", page.getTotalElements());
-        model.addAttribute("listProducts", listProducts);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reversedSortDir", reversedSortDir);
-        model.addAttribute("keyword", keyword);
         model.addAttribute("listCategories", listCategories);
 
         return "products/products";
@@ -100,10 +77,13 @@ public class ProductController {
                               @RequestParam(required = false) String[] imageIds,
                               @RequestParam(required = false) String[] imageNames,
                               @AuthenticationPrincipal ShopmeUserDetails loggedUser) throws IOException {
-        if (loggedUser.hasRole("Salesperson")) {
-            productService.saveProductPrice(productToSave);
-            redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
-            return "redirect:/products";
+
+        if (!loggedUser.hasRole("Admin") && !loggedUser.hasRole("Editor")) {
+            if (loggedUser.hasRole("Salesperson")) {
+                productService.saveProductPrice(productToSave);
+                redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
+                return "redirect:/products";
+            }
         }
 
         ProductSaveHelper.setMainImageName(mainImage, productToSave);
@@ -119,8 +99,6 @@ public class ProductController {
         redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
         return "redirect:/products";
     }
-
-
 
     @GetMapping("/{id}/enabled/{status}")
     public String updateProductEnabledStatus(@PathVariable Integer id, @PathVariable boolean status,
@@ -152,12 +130,24 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editProduct(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
+    public String editProduct(@PathVariable Integer id,
+                              Model model,
+                              RedirectAttributes redirectAttributes,
+                              @AuthenticationPrincipal ShopmeUserDetails loggedUser) {
         try {
             Product product = productService.getById(id);
             List<Brand> listBrands = brandService.listAll();
             Integer numberOfExistingExtraImages = product.getImages().size();
 
+            boolean isReadOnlyForSalesperson = false;
+
+            if (!loggedUser.hasRole("Admin") && !loggedUser.hasRole("Editor")) {
+                if (loggedUser.hasRole("Salesperson")) {
+                    isReadOnlyForSalesperson = true;
+                }
+            }
+
+            model.addAttribute("isReadOnlyForSalesperson", isReadOnlyForSalesperson);
             model.addAttribute("product", product);
             model.addAttribute("listBrands", listBrands);
             model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");

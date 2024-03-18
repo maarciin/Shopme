@@ -1,6 +1,5 @@
 package com.shopme.admin.setting.state;
 
-import com.shopme.common.entity.Country;
 import com.shopme.common.entity.State;
 import org.springframework.data.jpa.repository.JpaRepository;
 
