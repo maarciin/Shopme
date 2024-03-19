@@ -1,5 +1,6 @@
 package com.shopme.customer;
 
+import com.shopme.common.entity.AuthenticationType;
 import com.shopme.common.entity.Country;
 import com.shopme.common.entity.Customer;
 import com.shopme.setting.CountryRepository;
@@ -46,7 +47,6 @@ public class CustomerService {
         customer.setPassword(encodedPassword);
     }
 
-
     @Transactional
     public boolean verify(String verificationCode) {
         Optional<Customer> customer = customerRepository.findByVerificationCode(verificationCode);
@@ -56,6 +56,12 @@ public class CustomerService {
         } else {
             customerRepository.enableCustomer(customer.get().getId());
             return true;
+        }
+    }
+
+    public void updateAuthenticationType(Customer customer, AuthenticationType type) {
+        if (!customer.getAuthenticationType().equals(type)) {
+            customerRepository.updateAuthenticationType(customer.getId(), type);
         }
     }
 
