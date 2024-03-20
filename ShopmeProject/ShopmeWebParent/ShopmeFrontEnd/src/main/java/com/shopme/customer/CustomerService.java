@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 import net.bytebuddy.utility.RandomString;
-
+/**
+ * Service class for handling customer-related operations.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -24,14 +26,27 @@ public class CustomerService {
     private final CountryRepository countryRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Fetches all countries from the repository and sorts them by name.
+     * @return List of all countries sorted by name.
+     */
     public List<Country> listAllCountries() {
         return countryRepository.findAllByOrderByName();
     }
 
+    /**
+     * Checks if the provided email is unique.
+     * @param email Email to check.
+     * @return true if the email is unique, false otherwise.
+     */
     public boolean isEmailUnique(String email) {
         return customerRepository.findByEmail(email).isEmpty();
     }
 
+    /**
+     * Registers a new customer.
+     * @param customer Customer to register.
+     */
     public void registerCustomer(Customer customer) {
         encodePassword(customer);
         customer.setEnabled(false);
@@ -44,16 +59,29 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
+    /**
+     * Fetches a customer by their email.
+     * @param email Email of the customer.
+     * @return Customer object if found, null otherwise.
+     */
     public Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email).orElse(null);
     }
 
+    /**
+     * Encodes the password of a customer.
+     * @param customer Customer whose password is to be encoded.
+     */
     private void encodePassword(Customer customer) {
         String encodedPassword = passwordEncoder.encode(customer.getPassword());
         customer.setPassword(encodedPassword);
     }
 
-
+    /**
+     * Verifies a customer using a verification code.
+     * @param verificationCode Verification code to check.
+     * @return true if the verification is successful, false otherwise.
+     */
     public boolean verify(String verificationCode) {
         Optional<Customer> customer = customerRepository.findByVerificationCode(verificationCode);
 
@@ -65,12 +93,23 @@ public class CustomerService {
         }
     }
 
+    /**
+     * Updates the authentication type of customer.
+     * @param customer Customer whose authentication type is to be updated.
+     * @param type New authentication type.
+     */
     public void updateAuthenticationType(Customer customer, AuthenticationType type) {
         if (!customer.getAuthenticationType().equals(type)) {
             customerRepository.updateAuthenticationType(customer.getId(), type);
         }
     }
 
+    /**
+     * Adds a new customer upon OAuth login.
+     * @param name Name of the customer.
+     * @param email Email of the customer.
+     * @param countryCode Country code of the customer.
+     */
     public void addNewCustomerUponOAuthLogin(String name, String email, String countryCode) {
         Customer customer = new Customer();
         customer.setEmail(email);
@@ -91,6 +130,11 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
+    /**
+     * Sets the name of a customer.
+     * @param name Full name of the customer.
+     * @param customer Customer whose name is to be set.
+     */
     private void setName(String name, Customer customer) {
         String[] nameParts = name.split(" ");
         if (nameParts.length < 2) {
