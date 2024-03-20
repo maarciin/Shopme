@@ -1,5 +1,8 @@
 package com.shopme.security;
 
+import com.shopme.security.oauth.CustomerOAuth2UserService;
+import com.shopme.security.oauth.OAuth2LoginSuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -7,18 +10,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final CustomerOAuth2UserService oAuth2UserService;
+    private final OAuth2LoginSuccessHandler auth2LoginSuccessHandler;
+    private final DatabaseLoginSuccessHandler databaseLoginSuccessHandler;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public CustomerUserDetailsService userDetailsService() {
@@ -29,7 +32,7 @@ public class WebSecurityConfig {
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
 
         return authProvider;
     }
@@ -42,7 +45,13 @@ public class WebSecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("email")
+                        .successHandler(databaseLoginSuccessHandler)
                         .permitAll())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oAuth2UserService))
+                        .successHandler(auth2LoginSuccessHandler))
                 .logout(LogoutConfigurer::permitAll)
                 .rememberMe(rem -> rem
                         .key("AbcDefgHijKlmnOpqrs_1234567890")

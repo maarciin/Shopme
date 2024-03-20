@@ -17,6 +17,7 @@ import net.bytebuddy.utility.RandomString;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
@@ -35,6 +36,7 @@ public class CustomerService {
         encodePassword(customer);
         customer.setEnabled(false);
         customer.setCreatedTime(LocalDateTime.now());
+        customer.setAuthenticationType(AuthenticationType.DATABASE);
 
         String randomCode = RandomString.make(64);
         customer.setVerificationCode(randomCode);
@@ -42,12 +44,16 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
+    public Customer getCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email).orElse(null);
+    }
+
     private void encodePassword(Customer customer) {
         String encodedPassword = passwordEncoder.encode(customer.getPassword());
         customer.setPassword(encodedPassword);
     }
 
-    @Transactional
+
     public boolean verify(String verificationCode) {
         Optional<Customer> customer = customerRepository.findByVerificationCode(verificationCode);
 
@@ -62,6 +68,38 @@ public class CustomerService {
     public void updateAuthenticationType(Customer customer, AuthenticationType type) {
         if (!customer.getAuthenticationType().equals(type)) {
             customerRepository.updateAuthenticationType(customer.getId(), type);
+        }
+    }
+
+    public void addNewCustomerUponOAuthLogin(String name, String email, String countryCode) {
+        Customer customer = new Customer();
+        customer.setEmail(email);
+        setName(name, customer);
+        customer.setEnabled(true);
+        customer.setCreatedTime(LocalDateTime.now());
+        customer.setAuthenticationType(AuthenticationType.GOOGLE);
+        customer.setPassword("");
+        customer.setAddressLine1("");
+        customer.setCity("");
+        customer.setState("");
+        customer.setPhoneNumber("");
+        customer.setPostalCode("");
+        Country defaultCountryPoland = countryRepository.findById(180).get();
+        countryRepository.findByCode(countryCode)
+                .ifPresentOrElse(customer::setCountry, () -> customer.setCountry(defaultCountryPoland));
+
+        customerRepository.save(customer);
+    }
+
+    private void setName(String name, Customer customer) {
+        String[] nameParts = name.split(" ");
+        if (nameParts.length < 2) {
+            customer.setFirstName(name);
+            customer.setLastName("");
+        } else {
+            customer.setFirstName(nameParts[0]);
+            String lastName = name.replaceFirst(nameParts[0], "").trim();
+            customer.setLastName(lastName);
         }
     }
 
