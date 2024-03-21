@@ -6,6 +6,7 @@ import com.shopme.common.entity.Customer;
 import com.shopme.setting.CountryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import net.bytebuddy.utility.RandomString;
 /**
  * Service class for handling customer-related operations.
  */
@@ -28,6 +28,7 @@ public class CustomerService {
 
     /**
      * Fetches all countries from the repository and sorts them by name.
+     *
      * @return List of all countries sorted by name.
      */
     public List<Country> listAllCountries() {
@@ -36,6 +37,7 @@ public class CustomerService {
 
     /**
      * Checks if the provided email is unique.
+     *
      * @param email Email to check.
      * @return true if the email is unique, false otherwise.
      */
@@ -45,6 +47,7 @@ public class CustomerService {
 
     /**
      * Registers a new customer.
+     *
      * @param customer Customer to register.
      */
     public void registerCustomer(Customer customer) {
@@ -61,6 +64,7 @@ public class CustomerService {
 
     /**
      * Fetches a customer by their email.
+     *
      * @param email Email of the customer.
      * @return Customer object if found, null otherwise.
      */
@@ -70,6 +74,7 @@ public class CustomerService {
 
     /**
      * Encodes the password of a customer.
+     *
      * @param customer Customer whose password is to be encoded.
      */
     private void encodePassword(Customer customer) {
@@ -79,6 +84,7 @@ public class CustomerService {
 
     /**
      * Verifies a customer using a verification code.
+     *
      * @param verificationCode Verification code to check.
      * @return true if the verification is successful, false otherwise.
      */
@@ -95,8 +101,9 @@ public class CustomerService {
 
     /**
      * Updates the authentication type of customer.
+     *
      * @param customer Customer whose authentication type is to be updated.
-     * @param type New authentication type.
+     * @param type     New authentication type.
      */
     public void updateAuthenticationType(Customer customer, AuthenticationType type) {
         if (!customer.getAuthenticationType().equals(type)) {
@@ -106,8 +113,9 @@ public class CustomerService {
 
     /**
      * Adds a new customer upon OAuth login.
-     * @param name Name of the customer.
-     * @param email Email of the customer.
+     *
+     * @param name        Name of the customer.
+     * @param email       Email of the customer.
      * @param countryCode Country code of the customer.
      */
     public void addNewCustomerUponOAuthLogin(String name, String email, String countryCode, AuthenticationType authenticationType) {
@@ -132,7 +140,8 @@ public class CustomerService {
 
     /**
      * Sets the name of a customer.
-     * @param name Full name of the customer.
+     *
+     * @param name     Full name of the customer.
      * @param customer Customer whose name is to be set.
      */
     private void setName(String name, Customer customer) {
@@ -145,6 +154,28 @@ public class CustomerService {
             String lastName = name.replaceFirst(nameParts[0], "").trim();
             customer.setLastName(lastName);
         }
+    }
+
+    public void update(Customer customerInForm) {
+        Customer customerInDB = customerRepository.findById(customerInForm.getId()).get();
+
+        if (customerInDB.getAuthenticationType().equals(AuthenticationType.DATABASE)) {
+            if (!customerInForm.getPassword().isEmpty()) {
+                String encodedPassword = passwordEncoder.encode(customerInForm.getPassword());
+                customerInForm.setPassword(encodedPassword);
+            } else {
+                customerInForm.setPassword(customerInDB.getPassword());
+            }
+        } else {
+            customerInForm.setPassword(customerInDB.getPassword());
+        }
+
+        customerInForm.setEnabled(customerInDB.isEnabled());
+        customerInForm.setCreatedTime(customerInDB.getCreatedTime());
+        customerInForm.setVerificationCode(customerInDB.getVerificationCode());
+        customerInForm.setAuthenticationType(customerInDB.getAuthenticationType());
+
+        customerRepository.save(customerInForm);
     }
 
 }

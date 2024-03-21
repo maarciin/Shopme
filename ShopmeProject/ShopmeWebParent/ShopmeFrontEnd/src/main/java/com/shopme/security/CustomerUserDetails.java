@@ -2,11 +2,13 @@ package com.shopme.security;
 
 import com.shopme.common.entity.Customer;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Getter
 @AllArgsConstructor
 public class CustomerUserDetails implements UserDetails {
 
@@ -51,7 +53,4 @@ public class CustomerUserDetails implements UserDetails {
         return customer.getFullName();
     }
 
-    public Customer getCustomer() {
-        return this.customer;
-    }
 }
