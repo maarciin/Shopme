@@ -110,13 +110,13 @@ public class CustomerService {
      * @param email Email of the customer.
      * @param countryCode Country code of the customer.
      */
-    public void addNewCustomerUponOAuthLogin(String name, String email, String countryCode) {
+    public void addNewCustomerUponOAuthLogin(String name, String email, String countryCode, AuthenticationType authenticationType) {
         Customer customer = new Customer();
         customer.setEmail(email);
         setName(name, customer);
         customer.setEnabled(true);
         customer.setCreatedTime(LocalDateTime.now());
-        customer.setAuthenticationType(AuthenticationType.GOOGLE);
+        customer.setAuthenticationType(authenticationType);
         customer.setPassword("");
         customer.setAddressLine1("");
         customer.setCity("");

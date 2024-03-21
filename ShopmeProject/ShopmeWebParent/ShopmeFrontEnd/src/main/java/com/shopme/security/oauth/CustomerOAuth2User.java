@@ -1,6 +1,7 @@
 package com.shopme.security.oauth;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -11,6 +12,8 @@ import java.util.Map;
 public class CustomerOAuth2User implements OAuth2User {
 
     private OAuth2User oauth2User;
+    @Getter
+    private String clientName;
     @Override
     public Map<String, Object> getAttributes() {
         return oauth2User.getAttributes();
@@ -33,4 +36,5 @@ public class CustomerOAuth2User implements OAuth2User {
     public String getEmail() {
         return oauth2User.getAttribute("email");
     }
+
 }
