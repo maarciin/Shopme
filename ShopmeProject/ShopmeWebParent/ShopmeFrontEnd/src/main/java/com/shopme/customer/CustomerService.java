@@ -156,6 +156,11 @@ public class CustomerService {
         }
     }
 
+    /**
+     * Updates the details of a customer.
+     *
+     * @param customerInForm The customer object containing the updated details.
+     */
     public void update(Customer customerInForm) {
         Customer customerInDB = customerRepository.findById(customerInForm.getId()).get();
 
@@ -174,8 +179,53 @@ public class CustomerService {
         customerInForm.setCreatedTime(customerInDB.getCreatedTime());
         customerInForm.setVerificationCode(customerInDB.getVerificationCode());
         customerInForm.setAuthenticationType(customerInDB.getAuthenticationType());
+        customerInForm.setResetPasswordToken(customerInDB.getResetPasswordToken());
 
         customerRepository.save(customerInForm);
     }
 
+    /**
+     * Generates a reset password token for a customer.
+     *
+     * @param email The email of the customer.
+     * @return The generated reset password token.
+     * @throws CustomerNotFoundException if no customer is found with the provided email.
+     */
+    public String generateResetPasswordToken(String email) throws CustomerNotFoundException {
+        var customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomerNotFoundException("No customer found with email " + email));
+        String token = RandomString.make(30);
+        customer.setResetPasswordToken(token);
+        customerRepository.save(customer);
+
+        return token;
+    }
+
+    /**
+     * Fetches a customer using a reset password token.
+     *
+     * @param token The reset password token.
+     * @return The customer associated with the provided token.
+     * @throws CustomerNotFoundException if no customer is found with the provided token.
+     */
+    public Customer getByResetPasswordToken(String token) throws CustomerNotFoundException {
+        return customerRepository.findByResetPasswordToken(token)
+                .orElseThrow(() -> new CustomerNotFoundException("Invalid password reset token."));
+    }
+
+    /**
+     * Resets a customer's password.
+     *
+     * @param token       The reset password token.
+     * @param newPassword The new password.
+     * @throws CustomerNotFoundException if no customer is found with the provided token.
+     */
+    public void resetPassword(String token, String newPassword) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findByResetPasswordToken(token)
+                .orElseThrow(() -> new CustomerNotFoundException("No customer found: invalid token."));
+        customer.setPassword(newPassword);
+        customer.setResetPasswordToken(null);
+        encodePassword(customer);
+        customerRepository.save(customer);
+    }
 }

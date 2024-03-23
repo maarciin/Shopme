@@ -65,6 +65,9 @@ public class Customer {
     @Column(length = 10)
     private AuthenticationType authenticationType;
 
+    @Column(length = 64)
+    private String resetPasswordToken;
+
     @Override
     public String toString() {
         return "Customer{" +
