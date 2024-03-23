@@ -68,6 +68,10 @@ public class Customer {
     @Column(length = 64)
     private String resetPasswordToken;
 
+    public Customer(Integer id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
