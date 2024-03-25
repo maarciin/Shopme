@@ -6,6 +6,8 @@ import com.shopme.common.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * This service class is responsible for managing the shopping cart.
  */
@@ -69,6 +71,16 @@ public class ShoppingCartService {
         cartItem.setProduct(product);
         cartItem.setQuantity(0);
         return cartItem;
+    }
+
+    /**
+     * Retrieves all cart items for a given customer.
+     *
+     * @param customer the customer who owns the shopping cart
+     * @return a list of cart items for the given customer
+     */
+    public List<CartItem> listCartItems (Customer customer) {
+        return cartItemRepository.findByCustomer(customer);
     }
 
 }
