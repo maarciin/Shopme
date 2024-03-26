@@ -58,4 +58,24 @@ public class ShoppingCartRestController {
         return customerService.getCustomerByEmail(email);
     }
 
+    /**
+     * This method handles a POST request to update the quantity of a product in the cart.
+     *
+     * @param productId The ID of the product to be updated.
+     * @param quantity  The new quantity of the product.
+     * @param request   The HttpServletRequest object.
+     * @return A string message indicating the result of the operation.
+     */
+    @PostMapping("/cart/update/{productId}/{quantity}")
+    public String updateQuantity(@PathVariable Integer productId, @PathVariable Integer quantity, HttpServletRequest request) {
+        try {
+            Customer customer = getAuthenticatedCustomer(request);
+            float subtotal = shoppingCartService.updateQuantity(productId, quantity, customer);
+
+            return String.valueOf(subtotal);
+        } catch (CustomerNotFoundException e) {
+            return "You need to login to update products in your cart";
+        }
+    }
+
 }

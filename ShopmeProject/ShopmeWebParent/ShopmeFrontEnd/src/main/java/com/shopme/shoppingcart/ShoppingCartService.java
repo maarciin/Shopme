@@ -3,10 +3,13 @@ package com.shopme.shoppingcart;
 import com.shopme.common.entity.CartItem;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.Product;
+import com.shopme.product.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This service class is responsible for managing the shopping cart.
@@ -18,6 +21,7 @@ public class ShoppingCartService {
     private static final int CART_MAX_QUANTITY = 5;
 
     private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
 
     /**
      * Adds a product to the shopping cart of a given customer.
@@ -79,8 +83,23 @@ public class ShoppingCartService {
      * @param customer the customer who owns the shopping cart
      * @return a list of cart items for the given customer
      */
-    public List<CartItem> listCartItems (Customer customer) {
+    public List<CartItem> listCartItems(Customer customer) {
         return cartItemRepository.findByCustomer(customer);
     }
 
+    /**
+     * Updates the quantity of a product in the shopping cart of a given customer.
+     *
+     * @param productId the ID of the product to update
+     * @param quantity  the new quantity of the product
+     * @param customer  the customer who owns the shopping cart
+     * @return the updated subtotal of the product in the cart
+     */
+    @Transactional
+    public float updateQuantity(Integer productId, Integer quantity, Customer customer) {
+        cartItemRepository.updateQuantity(quantity, customer.getId(), productId);
+        return productRepository.findById(productId)
+                .map(product -> product.getDiscountPrice() * quantity)
+                .orElse(0.0f);
+    }
 }
