@@ -6,6 +6,7 @@ import com.shopme.customer.CustomerNotFoundException;
 import com.shopme.customer.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,7 +51,7 @@ public class ShoppingCartRestController {
      * @return The authenticated Customer object.
      * @throws CustomerNotFoundException If no authenticated customer is found.
      */
-    private Customer getAuthenticatedCustomer(HttpServletRequest request) throws CustomerNotFoundException {
+    public Customer getAuthenticatedCustomer(HttpServletRequest request) throws CustomerNotFoundException {
         String email = Utility.getEmailOfAuthenticatedCustomer(request);
         if (email == null) {
             throw new CustomerNotFoundException("No authenticated customer");
@@ -75,6 +76,25 @@ public class ShoppingCartRestController {
             return String.valueOf(subtotal);
         } catch (CustomerNotFoundException e) {
             return "You need to login to update products in your cart";
+        }
+    }
+
+
+    /**
+     * This method handles a DELETE request to remove a product from the cart.
+     *
+     * @param productId The ID of the product to be removed from the cart.
+     * @param request   The HttpServletRequest object.
+     * @return A string message indicating the result of the operation.
+     */
+    @DeleteMapping("/cart/remove/{productId}")
+    public String removeProduct(@PathVariable Integer productId, HttpServletRequest request) {
+        try {
+            Customer customer = getAuthenticatedCustomer(request);
+            shoppingCartService.removeProduct(productId, customer);
+            return "The product was removed from your cart";
+        } catch (CustomerNotFoundException e) {
+            return "You need to login to remove products from your cart";
         }
     }
 

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This service class is responsible for managing the shopping cart.
@@ -101,5 +100,16 @@ public class ShoppingCartService {
         return productRepository.findById(productId)
                 .map(product -> product.getDiscountPrice() * quantity)
                 .orElse(0.0f);
+    }
+
+    /**
+     * Removes a product from the shopping cart of a given customer.
+     *
+     * @param productId the ID of the product to remove
+     * @param customer  the customer who owns the shopping cart
+     */
+    @Transactional
+    public void removeProduct(Integer productId, Customer customer) {
+        cartItemRepository.deleteByCustomerAndProduct(customer.getId(), productId);
     }
 }
