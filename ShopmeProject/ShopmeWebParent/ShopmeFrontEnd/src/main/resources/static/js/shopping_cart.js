@@ -1,3 +1,6 @@
+decimalSeparator = decimalPointType === 'COMMA' ? ',' : '.';
+thousandSeparator = thousandsPointType === 'COMMA' ? ',' : '.';
+
 $(document).ready(function () {
     $(".linkMinus").on("click", function (e) {
         e.preventDefault();
@@ -36,7 +39,7 @@ function increaseQuantity(link) {
         quantityInput.val(newQuantity);
         updateQuantity(productId, newQuantity);
     } else {
-        showWarningModal("You can only buy a maximum of 5 items.");
+        showWarningModal("You can only buy a maximum of 5 items of the same product.");
     }
 }
 
@@ -58,8 +61,7 @@ function updateQuantity(productId, quantity) {
 }
 
 function updateSubtotal(updatedSubtotal, productId) {
-    formattedSubtotal = $.number(updatedSubtotal, 2);
-    $("#subtotal" + productId).text(updatedSubtotal);
+    $("#subtotal" + productId).text(formatCurrency(updatedSubtotal));
 }
 
 function updateTotal() {
@@ -68,14 +70,13 @@ function updateTotal() {
 
     $(".subtotal").each(function (index, element) {
         productCount++;
-        total += parseFloat(element.innerHTML.replaceAll(",", ""));
+        total += parseFloat(clearCurrencyFormat(element.innerHTML));
     });
 
     if (productCount < 1) {
         showEmptyShoppingCart();
     } else {
-        formattedTotal = $.number(total, 2);
-        $("#total").text(formattedTotal);
+        $("#total").text(formatCurrency(total));
     }
 }
 
@@ -113,4 +114,13 @@ function updateCountNumbers() {
     $(".divCount").each(function (index, element) {
         element.innerHTML = index + 1;
     });
+}
+
+function formatCurrency(amount) {
+    return $.number(amount, decimalDigits, decimalSeparator, thousandSeparator);
+}
+
+function clearCurrencyFormat(numberString) {
+    result = numberString.replaceAll(thousandSeparator, "");
+    return result.replaceAll(decimalSeparator, ".");
 }
