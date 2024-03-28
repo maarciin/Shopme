@@ -125,9 +125,6 @@
     contextPath = "[[@{/}]]";
     moduleURL = "[[@{/customers}]]";
 
-    var dropdownCountries;
-    var dropdownStates;
-
     function checkEmailUnique(form) {
         customerId = $("#id").val();
         customerEmail = $("#email").val();
@@ -151,37 +148,9 @@
         return false;
     }
 
-    $(document).ready(function() {
-        dropdownCountries = $("#country");
-        dropdownStates = $("#listStates");
-
-        dropdownCountries.on("change", function() {
-            loadStates4Country();
-            $("#state").val("").focus();
-        });
-
-        loadStates4Country();
-    });
-
-    function loadStates4Country() {
-        selectedCountry = $("#country option:selected");
-        countryId = selectedCountry.val();
-
-        url = "[[@{/statesByCountry/}]]" + countryId;
-
-        $.get(url, function(responseJson) {
-            dropdownStates.empty();
-
-            $.each(responseJson, function(index, state) {
-                $("<option>").val(state.name).text(state.name).appendTo(dropdownStates);
-            });
-        }).fail(function() {
-            showErrorModal("Error loading states/provinces for the selected country.");
-        })
-    }
-
 </script>
 <script th:src="@{/js/common_form.js}"></script>
+<script th:src="@{/js/common_form_country_state.js}"></script>
 </body>
 
 </html>

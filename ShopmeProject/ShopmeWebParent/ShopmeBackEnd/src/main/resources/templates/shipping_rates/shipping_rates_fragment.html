@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="codSupport" th:remove="tag">
+    <a th:if="${shippingRate.codSupported}"
+       class="fas fa-hand-holding-dollar fa-2x icon-green"
+       th:href="@{'/shipping_rates/cod/' + ${shippingRate.id} + '/enabled/false'}"
+       title="Disable COD support for this destination"
+    ></a>
+    <a th:unless="${shippingRate.codSupported}"
+       class="fas fa-hand-holding-dollar fa-2x icon-dark"
+       th:href="@{'/shipping_rates/cod/' + ${shippingRate.id} + '/enabled/true'}"
+       title="Enable COD support for this destination"
+    ></a>
+</div>
+
+</body>
+</html>
