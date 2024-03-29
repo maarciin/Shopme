@@ -41,7 +41,7 @@ public class AddressService {
     /**
      * Retrieves an address with the given ID for a given customer.
      *
-     * @param id The ID of the address to be retrieved.
+     * @param id         The ID of the address to be retrieved.
      * @param customerId The ID of the customer whose address is to be retrieved.
      * @return The address with the given ID for the given customer.
      * @throws AddressNotFoundException if no address with the given ID for the given customer could be found.
@@ -54,11 +54,24 @@ public class AddressService {
     /**
      * Deletes an address with the given ID for a given customer.
      *
-     * @param addressId The ID of the address to be deleted.
+     * @param addressId  The ID of the address to be deleted.
      * @param customerId The ID of the customer whose address is to be deleted.
      */
     public void delete(Integer addressId, Integer customerId) {
         addressRepository.deleteByIdAndCustomer(addressId, customerId);
+    }
+
+    /**
+     * Sets the given address as the default address for a given customer.
+     *
+     * @param defaultAddressId The ID of the address to be set as the default.
+     * @param customerId       The ID of the customer whose address is to be set as the default.
+     */
+    public void setDefaultAddress(Integer defaultAddressId, Integer customerId) {
+        if (defaultAddressId > 0) {
+            addressRepository.setDefaultAddress(defaultAddressId);
+        }
+        addressRepository.setNonDefaultForOthers(defaultAddressId, customerId);
     }
 
 }

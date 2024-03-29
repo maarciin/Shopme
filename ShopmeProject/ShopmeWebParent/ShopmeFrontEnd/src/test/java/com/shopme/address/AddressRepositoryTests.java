@@ -76,4 +76,24 @@ public class AddressRepositoryTests {
         assertThat(address).isNotPresent();
     }
 
+    @Test
+    public void testSetDefaultAddress() {
+        Integer addressId = 10;
+        repo.setDefaultAddress(addressId);
+        Address address = repo.findById(addressId).get();
+        assertThat(address.isDefaultForShipping()).isTrue();
+    }
+
+    @Test
+    public void testSetNonDefaultForOthers() {
+        Integer addressId = 10;
+        Integer customerId = 1;
+        repo.setNonDefaultForOthers(addressId, customerId);
+        List<Address> addresses = repo.findByCustomer(entityManager.find(Customer.class, customerId));
+        addresses.forEach(address -> {
+            if (address.getId() != addressId) {
+                assertThat(address.isDefaultForShipping()).isFalse();
+            }
+        });
+    }
 }

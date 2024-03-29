@@ -14,9 +14,17 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
     List<Address> findByCustomer(Customer customer);
 
     @Query("SELECT a FROM Address a WHERE a.id = ?1 AND a.customer.id = ?2")
-    Optional<Address> findByIdAndCustomer(Integer id, Integer customerId);
+    Optional<Address> findByIdAndCustomer(Integer addressId, Integer customerId);
 
     @Modifying
     @Query("DELETE FROM Address a WHERE a.id = ?1 AND a.customer.id = ?2")
-    void deleteByIdAndCustomer(Integer id, Integer customerId);
+    void deleteByIdAndCustomer(Integer addressId, Integer customerId);
+
+    @Modifying
+    @Query("UPDATE Address a SET a.defaultForShipping = true WHERE a.id = ?1")
+    void setDefaultAddress(Integer id);
+
+    @Modifying
+    @Query("UPDATE Address a SET a.defaultForShipping = false WHERE a.id <> ?1 AND a.customer.id = ?2")
+    void setNonDefaultForOthers(Integer addressId, Integer customerId);
 }

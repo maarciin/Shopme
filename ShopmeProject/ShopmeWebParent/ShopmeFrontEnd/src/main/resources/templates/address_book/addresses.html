@@ -18,8 +18,15 @@
                     <div class="row">
                         <div class="col">
                             <b>Your Primary Address</b>
+
+                            <th:block th:if="${usePrimaryAddressAsDefault}">
+                                <span class="text-danger">[Default]</span>
+                            </th:block>
+                            <th:block th:unless="${usePrimaryAddressAsDefault}">
+                                <a th:href="@{/address_book/default/0}">[Set as default]</a>
+                            </th:block>
                         </div>
-                        <div>
+                        <div class="col">
                             <div class="float-right">
                                 <a class="fas fa-edit icon-dark" title="Edit your primary address"
                                    th:href="@{/account_details(redirect=address_book)}"></a>
@@ -35,11 +42,17 @@
 
         <th:block th:each="address, status : ${listAddresses}">
             <div class="col-sm-6 mt-2">
-                <div class="card" th:classappend="${address.isDefaultForShipping ? 'bg-warning' : ''}">
+                <div class="card" th:classappend="${address.defaultForShipping ? 'bg-warning' : ''}">
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
                                 <b>Address #[[${status.count + 1}]]</b>
+                                <th:block th:if="${address.defaultForShipping}">
+                                    <span class="text-danger">[Default]</span>
+                                </th:block>
+                                <th:block th:unless="${address.defaultForShipping}">
+                                    <a th:href="@{'/address_book/default/' + ${address.id}}">[Set as default]</a>
+                                </th:block>
                             </div>
                             <div class="col">
                                 <div class="float-right">

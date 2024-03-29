@@ -29,7 +29,7 @@ public class AddressController {
     /**
      * Handles the GET request to show the address book.
      *
-     * @param model The model to add attributes to.
+     * @param model   The model to add attributes to.
      * @param request The HTTP request.
      * @return The name of the view to render.
      */
@@ -69,7 +69,7 @@ public class AddressController {
      *
      * @param address The address to save.
      * @param request The HTTP request.
-     * @param ra The redirect attributes to add flash attributes to.
+     * @param ra      The redirect attributes to add flash attributes to.
      * @return The URL to redirect to.
      */
     @PostMapping("/save")
@@ -84,10 +84,10 @@ public class AddressController {
     /**
      * Handles the GET request to edit an address.
      *
-     * @param id The ID of the address to edit.
-     * @param model The model to add attributes to.
+     * @param id      The ID of the address to edit.
+     * @param model   The model to add attributes to.
      * @param request The HTTP request.
-     * @param ra The redirect attributes to add flash attributes to.
+     * @param ra      The redirect attributes to add flash attributes to.
      * @return The name of the view to render, or the URL to redirect to if an error occurs.
      */
     @GetMapping("/edit/{id}")
@@ -112,9 +112,9 @@ public class AddressController {
     /**
      * Handles the GET request to delete an address.
      *
-     * @param id The ID of the address to delete.
+     * @param id      The ID of the address to delete.
      * @param request The HTTP request.
-     * @param ra The redirect attributes to add flash attributes to.
+     * @param ra      The redirect attributes to add flash attributes to.
      * @return The URL to redirect to.
      */
     @GetMapping("/delete/{id}")
@@ -122,6 +122,21 @@ public class AddressController {
         var customer = getAuthenticatedCustomer(request);
         addressService.delete(id, customer.getId());
         ra.addFlashAttribute("message", "The address has been deleted successfully.");
+        return "redirect:/address_book";
+    }
+
+    /**
+     * Handles the GET request to set an address as the default address.
+     *
+     * @param id      The ID of the address to set as default.
+     * @param request The HTTP request to get the authenticated customer from.
+     * @return The URL to redirect to.
+     */
+
+    @GetMapping("/default/{id}")
+    public String setDefaultAddress(@PathVariable Integer id, HttpServletRequest request) {
+        var customer = getAuthenticatedCustomer(request);
+        addressService.setDefaultAddress(id, customer.getId());
         return "redirect:/address_book";
     }
 
@@ -135,4 +150,5 @@ public class AddressController {
         var email = Utility.getEmailOfAuthenticatedCustomer(request);
         return customerService.getCustomerByEmail(email);
     }
+
 }
