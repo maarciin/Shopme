@@ -56,4 +56,16 @@ public class OrderController {
 
         currencySettings.forEach(setting -> request.setAttribute(setting.getKey(), setting.getValue()));
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteOrder(@PathVariable Integer id, RedirectAttributes ra) {
+        try {
+            orderService.delete(id);
+            ra.addFlashAttribute("message", "The order ID " + id + " has been deleted successfully");
+        } catch (OrderNotFoundException e) {
+            ra.addFlashAttribute("message", e.getMessage());
+        }
+
+        return defaultRedirectUrl;
+    }
 }

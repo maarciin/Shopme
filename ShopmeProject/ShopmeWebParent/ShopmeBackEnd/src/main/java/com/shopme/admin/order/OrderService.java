@@ -69,4 +69,10 @@ public class OrderService {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Could not find any order with ID " + id));
     }
+
+    public void delete(Integer id) throws OrderNotFoundException {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException("Could not find any order with ID " + id));
+        orderRepository.delete(order);
+    }
 }

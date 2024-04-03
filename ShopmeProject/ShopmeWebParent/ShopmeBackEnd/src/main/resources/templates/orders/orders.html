@@ -92,6 +92,7 @@
     $(document).ready(function() {
         handleLinkViewCustomerDetails();
         handleLinkViewOrderDetails();
+        handleLinkDeleteOrder();
     });
 
     function handleLinkViewCustomerDetails() {
@@ -107,6 +108,13 @@
             e.preventDefault();
             linkDetailURL = $(this).attr("href");
             $("#orderDetailModal").modal("show").find(".modal-content").load(linkDetailURL);
+        });
+    }
+
+    function handleLinkDeleteOrder() {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();
+            showDeleteConfirmModal($(this), 'category');
         });
     }
 
