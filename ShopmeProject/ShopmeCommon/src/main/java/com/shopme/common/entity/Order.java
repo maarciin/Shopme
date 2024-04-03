@@ -94,4 +94,13 @@ public class Order {
                 + ", customer=" + customer.getFullName() + "]";
     }
 
+    @Transient
+    public String getDestination() {
+        String destination = city + ", ";
+        if (state != null && !state.isEmpty()) destination += state + ", ";
+        destination += country;
+
+        return destination;
+    }
+
 }

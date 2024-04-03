@@ -40,7 +40,7 @@ public class CustomerController {
             Customer customer = customerService.getById(id);
             model.addAttribute("customer", customer);
 
-            return "customer_detail_modal3";
+            return "customers/customer_detail_modal";
         } catch (CustomerNotFoundException e) {
             ra.addFlashAttribute("message", e.getMessage());
             return "redirect:/customers";
