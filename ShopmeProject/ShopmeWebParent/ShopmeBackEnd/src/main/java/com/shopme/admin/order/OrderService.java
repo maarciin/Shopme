@@ -65,10 +65,24 @@ public class OrderService {
         helper.updateModelAttributes(pageNum, page);
     }
 
+    /**
+     * Retrieves an order by its ID.
+     *
+     * @param id The ID of the order.
+     * @return The order with the given ID.
+     * @throws OrderNotFoundException If no order is found with the given ID.
+     */
     public Order getOrder(Integer id) throws OrderNotFoundException {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Could not find any order with ID " + id));
     }
+
+    /**
+     * Deletes an order by its ID.
+     *
+     * @param id The ID of the order to delete.
+     * @throws OrderNotFoundException If no order is found with the given ID.
+     */
 
     public void delete(Integer id) throws OrderNotFoundException {
         Order order = orderRepository.findById(id)
