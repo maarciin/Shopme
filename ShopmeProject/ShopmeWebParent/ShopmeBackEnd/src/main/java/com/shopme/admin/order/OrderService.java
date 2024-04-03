@@ -35,7 +35,7 @@ public class OrderService {
      * Lists the orders for the current page and updates the model attributes.
      *
      * @param pageNum The current page number.
-     * @param helper The helper object for handling pagination and sorting.
+     * @param helper  The helper object for handling pagination and sorting.
      */
     public void listByPage(int pageNum, PagingAndSortingHelper helper) {
 
@@ -63,5 +63,10 @@ public class OrderService {
         }
 
         helper.updateModelAttributes(pageNum, page);
+    }
+
+    public Order getOrder(Integer id) throws OrderNotFoundException {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException("Could not find any order with ID " + id));
     }
 }
