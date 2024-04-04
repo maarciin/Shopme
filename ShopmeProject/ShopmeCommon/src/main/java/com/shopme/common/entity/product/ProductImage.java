@@ -1,7 +1,7 @@
-package com.shopme.common.entity;
+package com.shopme.common.entity.product;
 
+import com.shopme.common.entity.IdBasedEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class ProductImage {
+public class ProductImage extends IdBasedEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     private String name;
 
     @ManyToOne
@@ -24,6 +20,12 @@ public class ProductImage {
     private Product product;
 
     public ProductImage(String name, Product product) {
+        this.name = name;
+        this.product = product;
+    }
+
+    public ProductImage(Integer id, String name, Product product) {
+        this.id = id;
         this.name = name;
         this.product = product;
     }

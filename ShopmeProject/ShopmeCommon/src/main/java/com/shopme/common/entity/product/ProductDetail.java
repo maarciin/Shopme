@@ -1,5 +1,6 @@
-package com.shopme.common.entity;
+package com.shopme.common.entity.product;
 
+import com.shopme.common.entity.IdBasedEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductDetail {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class ProductDetail extends IdBasedEntity {
 
     @Column(nullable = false, length = 255)
     private String name;

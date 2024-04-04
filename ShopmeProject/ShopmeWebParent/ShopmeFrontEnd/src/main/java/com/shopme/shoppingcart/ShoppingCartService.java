@@ -2,7 +2,7 @@ package com.shopme.shoppingcart;
 
 import com.shopme.common.entity.CartItem;
 import com.shopme.common.entity.Customer;
-import com.shopme.common.entity.Product;
+import com.shopme.common.entity.product.Product;
 import com.shopme.product.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

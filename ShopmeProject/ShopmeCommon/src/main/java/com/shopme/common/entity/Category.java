@@ -13,11 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Category extends IdBasedEntity {
 
     @Column(length = 128, nullable = false, unique = true)
     private String name;
@@ -28,7 +24,6 @@ public class Category {
     @Column(length = 64, nullable = false)
     private String image;
     private boolean enabled;
-
 
     @Column(name = "all_parent_ids", length = 256)
     private String allParentIds;

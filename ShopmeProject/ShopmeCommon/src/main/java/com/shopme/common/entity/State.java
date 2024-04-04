@@ -1,7 +1,10 @@
 package com.shopme.common.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "states")
@@ -9,10 +12,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @ToString
-public class State {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class State extends IdBasedEntity {
 
     @Column(nullable = false, length = 45)
     private String name;

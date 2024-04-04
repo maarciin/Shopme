@@ -1,8 +1,14 @@
 package com.shopme.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Set;
 
@@ -12,10 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Country {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Country extends IdBasedEntity {
 
     @Column(nullable = false, length = 45)
     private String name;

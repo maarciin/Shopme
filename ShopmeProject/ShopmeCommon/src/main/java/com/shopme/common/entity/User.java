@@ -13,12 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class User extends IdBasedEntity {
     @Column(length = 128, nullable = false, unique = true)
     private String email;
 

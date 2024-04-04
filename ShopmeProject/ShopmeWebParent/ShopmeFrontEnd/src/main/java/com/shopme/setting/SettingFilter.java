@@ -1,6 +1,6 @@
 package com.shopme.setting;
 
-import com.shopme.common.entity.Setting;
+import com.shopme.common.entity.setting.Setting;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

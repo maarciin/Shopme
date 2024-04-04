@@ -1,6 +1,11 @@
-package com.shopme.common.entity;
+package com.shopme.common.entity.order;
 
-import jakarta.persistence.*;
+import com.shopme.common.entity.IdBasedEntity;
+import com.shopme.common.entity.product.Product;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,11 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderDetail {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class OrderDetail extends IdBasedEntity {
 
     private int quantity;
     private float productCost;

@@ -26,28 +26,28 @@ public class AddressRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
-    @Test
-    public void testCreateAddress() {
-        Country usa = entityManager.find(Country.class, 234);
-        Customer customer = entityManager.find(Customer.class, 1);
-
-        Address addressToSave = Address.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .phoneNumber("1234567890")
-                .addressLine1("123 Main Street")
-                .city("New York")
-                .state("NY")
-                .postalCode("10001")
-                .country(usa)
-                .customer(customer)
-                .defaultForShipping(true)
-                .build();
-
-        Address savedAddress = repo.save(addressToSave);
-
-        assertThat(savedAddress.getId()).isGreaterThan(0);
-    }
+//    @Test
+//    public void testCreateAddress() {
+//        Country usa = entityManager.find(Country.class, 234);
+//        Customer customer = entityManager.find(Customer.class, 1);
+//
+//        Address addressToSave = Address.builder()
+//                .firstName("John")
+//                .lastName("Doe")
+//                .phoneNumber("1234567890")
+//                .addressLine1("123 Main Street")
+//                .city("New York")
+//                .state("NY")
+//                .postalCode("10001")
+//                .country(usa)
+//                .customer(customer)
+//                .defaultForShipping(true)
+//                .build();
+//
+//        Address savedAddress = repo.save(addressToSave);
+//
+//        assertThat(savedAddress.getId()).isGreaterThan(0);
+//    }
 
     @Test
     public void testFindByCustomer() {

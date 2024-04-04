@@ -1,7 +1,7 @@
 package com.shopme.admin.product;
 
 import com.shopme.admin.paging.PagingAndSortingHelper;
-import com.shopme.common.entity.Product;
+import com.shopme.common.entity.product.Product;
 import com.shopme.common.exception.ProductNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

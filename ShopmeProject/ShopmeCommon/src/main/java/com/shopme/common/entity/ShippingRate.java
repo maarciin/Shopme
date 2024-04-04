@@ -3,8 +3,6 @@ package com.shopme.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Objects;
-
 @Entity
 @Table(name = "shipping_rates")
 @Getter
@@ -13,11 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-public class ShippingRate {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class ShippingRate extends IdBasedEntity {
 
     private float rate;
     private int days;
