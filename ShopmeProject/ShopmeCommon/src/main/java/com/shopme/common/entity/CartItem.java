@@ -28,6 +28,10 @@ public class CartItem {
     private Integer quantity;
 
     @Transient
+    @Getter
+    private float shippingCost;
+
+    @Transient
     public float getSubtotal() {
         return product.getDiscountPrice() * quantity;
     }
