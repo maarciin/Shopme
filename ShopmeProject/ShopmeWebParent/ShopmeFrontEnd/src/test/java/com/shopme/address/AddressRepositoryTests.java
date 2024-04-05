@@ -96,4 +96,12 @@ public class AddressRepositoryTests {
             }
         });
     }
+
+    @Test
+    public void testGetDefault() {
+        Integer customerId = 1;
+        Optional<Address> address = repo.findDefaultByCustomer(customerId);
+        assertThat(address).isPresent();
+        System.out.println(address);
+    }
 }

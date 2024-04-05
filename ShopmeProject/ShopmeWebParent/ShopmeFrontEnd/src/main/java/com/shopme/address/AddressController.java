@@ -137,7 +137,15 @@ public class AddressController {
     public String setDefaultAddress(@PathVariable Integer id, HttpServletRequest request) {
         var customer = getAuthenticatedCustomer(request);
         addressService.setDefaultAddress(id, customer.getId());
-        return "redirect:/address_book";
+
+        String redirectOption = request.getParameter("redirect");
+        String redirectURL = "redirect:/address_book";
+
+        if ("cart".equals(redirectOption)) {
+            redirectURL = "redirect:/cart";
+        }
+
+        return redirectURL;
     }
 
     /**

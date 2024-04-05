@@ -74,4 +74,9 @@ public class AddressService {
         addressRepository.setNonDefaultForOthers(defaultAddressId, customerId);
     }
 
+    public Address getDefaultAddress(Customer customer) throws AddressNotFoundException {
+        return addressRepository.findDefaultByCustomer(customer.getId())
+                .orElseThrow(() -> new AddressNotFoundException("No default address found for the customer"));
+    }
+
 }
