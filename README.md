@@ -21,3 +21,5 @@ Java Spring Boot E-Commerce project - Real-world Shopping Website with Java and 
 - Spring RESTful Webservices
 
 - Bootstrap 4, HTML5 and jQuery 3
+
+- GitHub Copilot for Javadoc and code refactoring
