@@ -46,4 +46,12 @@ public class SettingService {
         return settingRepository.findByCategory(SettingCategory.CURRENCY);
     }
 
+    /**
+     * Get all settings related to payment
+     * @return List of settings
+     */
+    public List<Setting> getPaymentSettings() {
+        return settingRepository.findByCategory(SettingCategory.PAYMENT);
+    }
+
 }
