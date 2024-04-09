@@ -6,19 +6,31 @@ import com.shopme.address.AddressService;
 import com.shopme.common.entity.Address;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.ShippingRate;
+import com.shopme.common.entity.order.Order;
 import com.shopme.common.entity.order.PaymentMethod;
 import com.shopme.customer.CustomerService;
 import com.shopme.order.OrderService;
+import com.shopme.setting.CurrencySettingBag;
+import com.shopme.setting.EmailSettingBag;
+import com.shopme.setting.SettingService;
 import com.shopme.shipping.ShippingRateNotFoundException;
 import com.shopme.shipping.ShippingRateService;
 import com.shopme.shoppingcart.ShoppingCartService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Controller class for handling checkout operations.
@@ -34,6 +46,7 @@ public class CheckoutController {
     private final ShippingRateService shippingRateService;
     private final ShoppingCartService shoppingCartService;
     private final OrderService orderService;
+    private final SettingService settingService;
 
     /**
      * Handles GET requests to the /checkout endpoint.
@@ -95,7 +108,7 @@ public class CheckoutController {
      * @return The name of the view to render.
      */
     @PostMapping("/place_order")
-    public String placeOrder(HttpServletRequest request) {
+    public String placeOrder(HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
         String paymentType = request.getParameter("paymentMethod");
         PaymentMethod paymentMethod = PaymentMethod.valueOf(paymentType);
 
@@ -116,10 +129,54 @@ public class CheckoutController {
         var cartItems = shoppingCartService.listCartItems(customer);
         var checkoutInfo = checkoutService.prepareCheckout(cartItems, shippingRate);
 
-        orderService.createOrder(customer, defaultAddress, cartItems, paymentMethod, checkoutInfo);
+        Order createdOrder = orderService.createOrder(customer, defaultAddress, cartItems, paymentMethod, checkoutInfo);
         shoppingCartService.deleteByCustomer(customer);
 
+        sendConfirmationEmail(createdOrder);
+
         return "checkout/order_completed";
+    }
+
+    /**
+     * Sends a confirmation email to the customer for the given order.
+     *
+     * @param order The order to send the email for.
+     * @throws MessagingException           If an error occurs while sending the email.
+     * @throws UnsupportedEncodingException If an error occurs while encoding the email content.
+     */
+    private void sendConfirmationEmail(Order order) throws MessagingException, UnsupportedEncodingException {
+        EmailSettingBag emailSettings = settingService.getEmailSettings();
+        JavaMailSenderImpl mailSender = Utility.prepareMailSender(emailSettings);
+        mailSender.setDefaultEncoding("utf-8");
+
+        String toAddress = order.getCustomer().getEmail();
+        String subject = emailSettings.getOrderConfirmationSubject();
+        subject = subject.replace("[[orderId]]", String.valueOf(order.getId()));
+
+        String content = emailSettings.getOrderConfirmationContent();
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(emailSettings.getFromAddress(), emailSettings.getSenderName());
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        DateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss E, dd MMM yyyy");
+        String orderTime = dateFormatter.format(order.getOrderTime());
+
+        CurrencySettingBag currencySettings = settingService.getCurrencySettings();
+        String totalAmount = Utility.formatCurrency(order.getTotal(), currencySettings);
+
+        content = content.replace("[[name]]", order.getCustomer().getFullName());
+        content = content.replace("[[orderId]]", String.valueOf(order.getId()));
+        content = content.replace("[[orderTime]]", orderTime);
+        content = content.replace("[[shippingAddress]]", order.getShippingAddress());
+        content = content.replace("[[total]]", totalAmount);
+        content = content.replace("[[paymentMethod]]", order.getPaymentMethod().toString());
+
+        helper.setText(content, true);
+        mailSender.send(message);
     }
 
 }

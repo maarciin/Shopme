@@ -1,6 +1,7 @@
 package com.shopme;
 
 import com.shopme.security.oauth.CustomerOAuth2User;
+import com.shopme.setting.CurrencySettingBag;
 import com.shopme.setting.EmailSettingBag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -9,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import java.security.Principal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Properties;
 
 public class Utility {
@@ -52,4 +55,31 @@ public class Utility {
         }
         return customerEmail;
     }
+
+    /**
+     * This method formats the currency amount based on the settings provided in the CurrencySettingBag object.
+     *
+     * @param amount   The amount to be formatted.
+     * @param settings The CurrencySettingBag object containing the currency settings.
+     * @return The formatted currency amount.
+     */
+    public static String formatCurrency(float amount, CurrencySettingBag settings) {
+        String symbol = settings.getSymbol();
+        String symbolPosition = settings.getSymbolPosition();
+        String decimalPointType = settings.getDecimalPointType();
+        String thousandPointType = settings.getThousandPointType();
+        int decimalDigits = settings.getDecimalDigits();
+
+        String numberPattern = "###,###." + "#".repeat(decimalDigits);
+        String patternWithSymbol = symbolPosition.equals("Before Price") ? symbol + numberPattern : numberPattern + symbol;
+
+        DecimalFormatSymbols formatSymbols = DecimalFormatSymbols.getInstance();
+        formatSymbols.setDecimalSeparator(decimalPointType.charAt(0));
+        formatSymbols.setGroupingSeparator(thousandPointType.charAt(0));
+
+        DecimalFormat formatter = new DecimalFormat(patternWithSymbol, formatSymbols);
+
+        return formatter.format(amount);
+    }
+
 }
