@@ -6,7 +6,9 @@ import com.shopme.address.AddressService;
 import com.shopme.common.entity.Address;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.ShippingRate;
+import com.shopme.common.entity.order.PaymentMethod;
 import com.shopme.customer.CustomerService;
+import com.shopme.order.OrderService;
 import com.shopme.shipping.ShippingRateNotFoundException;
 import com.shopme.shipping.ShippingRateService;
 import com.shopme.shoppingcart.ShoppingCartService;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -30,6 +33,7 @@ public class CheckoutController {
     private final AddressService addressService;
     private final ShippingRateService shippingRateService;
     private final ShoppingCartService shoppingCartService;
+    private final OrderService orderService;
 
     /**
      * Handles GET requests to the /checkout endpoint.
@@ -82,4 +86,40 @@ public class CheckoutController {
         var email = Utility.getEmailOfAuthenticatedCustomer(request);
         return customerService.getCustomerByEmail(email);
     }
+
+    /**
+     * Handles POST requests to the /place_order endpoint.
+     * Places an order for the authenticated customer.
+     *
+     * @param request The HTTP request.
+     * @return The name of the view to render.
+     */
+    @PostMapping("/place_order")
+    public String placeOrder(HttpServletRequest request) {
+        String paymentType = request.getParameter("paymentMethod");
+        PaymentMethod paymentMethod = PaymentMethod.valueOf(paymentType);
+
+        var customer = getAuthenticatedCustomer(request);
+
+        Address defaultAddress = null;
+        ShippingRate shippingRate = null;
+        boolean usePrimaryAddressAsDefault = false;
+
+        try {
+            defaultAddress = addressService.getDefaultAddress(customer);
+            shippingRate = shippingRateService.getShippingRateForAddress(defaultAddress);
+        } catch (AddressNotFoundException e) {
+            usePrimaryAddressAsDefault = true;
+        } catch (ShippingRateNotFoundException e) {
+        }
+
+        var cartItems = shoppingCartService.listCartItems(customer);
+        var checkoutInfo = checkoutService.prepareCheckout(cartItems, shippingRate);
+
+        orderService.createOrder(customer, defaultAddress, cartItems, paymentMethod, checkoutInfo);
+        shoppingCartService.deleteByCustomer(customer);
+
+        return "checkout/order_completed";
+    }
+
 }

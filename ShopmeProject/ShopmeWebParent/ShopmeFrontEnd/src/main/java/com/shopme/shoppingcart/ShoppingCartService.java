@@ -112,4 +112,14 @@ public class ShoppingCartService {
     public void removeProduct(Integer productId, Customer customer) {
         cartItemRepository.deleteByCustomerAndProduct(customer.getId(), productId);
     }
+
+    /**
+     * Removes all products from the shopping cart of a given customer.
+     *
+     * @param customer the customer who owns the shopping cart
+     */
+    @Transactional
+    public void deleteByCustomer(Customer customer) {
+        cartItemRepository.deleteByCustomer(customer.getId());
+    }
 }

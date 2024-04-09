@@ -1,6 +1,7 @@
 package com.shopme.common.entity.order;
 
 import com.shopme.common.entity.AbstractAddress;
+import com.shopme.common.entity.Address;
 import com.shopme.common.entity.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -77,4 +78,15 @@ public class Order extends AbstractAddress {
         return destination;
     }
 
+    public void copyShippingAddress(Address address) {
+        setFirstName(address.getFirstName());
+        setLastName(address.getLastName());
+        setPhoneNumber(address.getPhoneNumber());
+        setAddressLine1(address.getAddressLine1());
+        setAddressLine2(address.getAddressLine2());
+        setCity(address.getCity());
+        setState(address.getState());
+        setCountry(address.getCountry().getName());
+        setPostalCode(address.getPostalCode());
+    }
 }
