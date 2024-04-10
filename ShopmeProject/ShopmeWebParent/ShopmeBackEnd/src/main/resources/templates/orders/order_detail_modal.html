@@ -14,6 +14,9 @@
         <li class="nav-item">
             <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab">Shipping</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id="track-tab" data-toggle="tab" href="#track" role="tab">Track</a>
+        </li>
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active p-3" id="overview" role="tabpanel" aria-labelledby="overview-tab">
@@ -92,13 +95,14 @@
                     <div class="col-sm-1">
                         <div class="div-count">[[${status.count}]]</div>
                     </div>
-                    <div class="col-sm-3"><img th:src="@{${product.mainImagePath}}" class="img-fluid" /></div>
+                    <div class="col-sm-3"><img th:src="@{${product.mainImagePath}}" class="img-fluid"/></div>
                     <div class="col-sm-8">
                         <div class="text-wrap">
                             <b>[[${product.name}]]</b>
                         </div>
                         <div>
-                            Product Cost: <div th:replace="~{fragments :: format_currency(${detail.productCost})}"></div>
+                            Product Cost:
+                            <div th:replace="~{fragments :: format_currency(${detail.productCost})}"></div>
                         </div>
                         <div>
                             Subtotal: [[${detail.quantity}]] X
@@ -107,7 +111,8 @@
                             <div th:replace="~{fragments :: format_currency(${detail.subtotal})}"></div>
                         </div>
                         <div>
-                            Shipping Cost: <div th:replace="~{fragments :: format_currency(${detail.shippingCost})}"></div>
+                            Shipping Cost:
+                            <div th:replace="~{fragments :: format_currency(${detail.shippingCost})}"></div>
                         </div>
                     </div>
                 </div>
@@ -181,7 +186,45 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="tab-pane fade p-3" id="track" role="tabpanel" aria-labelledby="track-tab">
+            <div class="full-details">
+                <table class="table table-bordered table-striped table-hover table-responsive-sm">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="track : ${order.orderTracks}">
+                        <td>
+                            <div th:replace="~{fragments :: format_time(${track.updatedTime})}"></div>
+                        </td>
+                        <td th:text="${track.status}"></td>
+                        <td><i>[[${track.notes}]]</i></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="less-details">
+                <th:block th:each="track : ${order.orderTracks}">
+                    <div class="row p-1">
+                        <div th:replace="~{fragments :: format_time(${track.updatedTime})}"></div>
+                    </div>
+                    <div class="row p-1 ml-3">
+                        <span>&nbsp;&nbsp;<b>[[${track.status}]]</b>: <i>[[${track.notes}]]</i></span>
+                    </div>
+                    <div class="row">&nbsp;</div>
+                </th:block>
+            </div>
+        </div>
+
     </div>
+</div>
 
 </div>
 
