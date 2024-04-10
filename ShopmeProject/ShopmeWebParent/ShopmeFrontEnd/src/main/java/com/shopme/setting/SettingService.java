@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SettingService {
 
     private final SettingRepository settingRepository;
+    private final CurrencyRepository currencyRepository;
 
     public List<Setting> getGeneralSettings() {
         return settingRepository.findByTwoCategories(SettingCategory.GENERAL, SettingCategory.CURRENCY);
@@ -25,6 +27,17 @@ public class SettingService {
     public CurrencySettingBag getCurrencySettings() {
         List<Setting> settings = settingRepository.findByCategory(SettingCategory.CURRENCY);
         return new CurrencySettingBag(settings);
+    }
+
+    public PaymentSettingBag getPaymentSettings() {
+        List<Setting> settings = settingRepository.findByCategory(SettingCategory.PAYMENT);
+        return new PaymentSettingBag(settings);
+    }
+
+    public String getCurrencyCode() {
+        Setting setting = settingRepository.findByKey("CURRENCY_ID").orElseThrow();
+        Integer currencyId = Integer.parseInt(setting.getValue());
+        return currencyRepository.findById(currencyId).orElseThrow().getCode();
     }
 
 }

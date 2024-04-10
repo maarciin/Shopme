@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SettingRepository extends JpaRepository<Setting, String> {
 
@@ -13,4 +14,6 @@ public interface SettingRepository extends JpaRepository<Setting, String> {
 
     @Query("SELECT s FROM Setting s WHERE s.category = ?1 OR s.category = ?2")
     List<Setting> findByTwoCategories(SettingCategory catOne, SettingCategory catTwo);
+
+    Optional<Setting> findByKey(String key);
 }
