@@ -1,10 +1,7 @@
 package com.shopme.admin.order;
 
-import com.shopme.common.entity.*;
-import com.shopme.common.entity.order.Order;
-import com.shopme.common.entity.order.OrderDetail;
-import com.shopme.common.entity.order.OrderStatus;
-import com.shopme.common.entity.order.PaymentMethod;
+import com.shopme.common.entity.Customer;
+import com.shopme.common.entity.order.*;
 import com.shopme.common.entity.product.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,5 +152,30 @@ public class OrderRepositoryTests {
         assertThat(result).isNotPresent();
     }
 
+    @Test
+    public void testUpdateOrderTracks() {
+        Integer orderId = 7;
+        Order order = repo.findById(orderId).get();
+
+        OrderTrack orderTrack1 = new OrderTrack();
+        orderTrack1.setOrder(order);
+        orderTrack1.setStatus(OrderStatus.PAID);
+        orderTrack1.setNotes(OrderStatus.PAID.defaultDescription());
+        orderTrack1.setUpdatedTime(new Date());
+
+        OrderTrack orderTrack2 = new OrderTrack();
+        orderTrack2.setOrder(order);
+        orderTrack2.setStatus(OrderStatus.SHIPPING);
+        orderTrack2.setNotes(OrderStatus.SHIPPING.defaultDescription());
+        orderTrack2.setUpdatedTime(new Date());
+
+        order.getOrderTracks().add(orderTrack1);
+        order.getOrderTracks().add(orderTrack2);
+
+        Order updatedOrder = repo.save(order);
+
+        assertThat(updatedOrder.getOrderTracks()).isNotEmpty();
+        assertThat(updatedOrder.getOrderTracks()).hasSize(2);
+    }
 
 }
