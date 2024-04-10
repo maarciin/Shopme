@@ -3,6 +3,8 @@ package com.shopme.checkout;
 import com.shopme.Utility;
 import com.shopme.address.AddressNotFoundException;
 import com.shopme.address.AddressService;
+import com.shopme.checkout.paypal.PayPalApiException;
+import com.shopme.checkout.paypal.PayPalService;
 import com.shopme.common.entity.Address;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.ShippingRate;
@@ -37,7 +39,6 @@ import java.text.SimpleDateFormat;
  */
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/checkout")
 public class CheckoutController {
 
     private final CheckoutService checkoutService;
@@ -47,6 +48,7 @@ public class CheckoutController {
     private final ShoppingCartService shoppingCartService;
     private final OrderService orderService;
     private final SettingService settingService;
+    private final PayPalService payPalService;
 
     /**
      * Handles GET requests to the /checkout endpoint.
@@ -56,7 +58,7 @@ public class CheckoutController {
      * @param request The HTTP request.
      * @return The name of the view to render.
      */
-    @GetMapping
+    @GetMapping("/checkout")
     public String showCheckoutPage(Model model, HttpServletRequest request) {
         var customer = getAuthenticatedCustomer(request);
 
@@ -184,6 +186,37 @@ public class CheckoutController {
 
         helper.setText(content, true);
         mailSender.send(message);
+    }
+
+    /**
+     * Handles GET requests to the /process_paypal_order endpoint.
+     * Processes a PayPal order for the authenticated customer.
+     *
+     * @param request The HTTP request.
+     * @param model   The model to add attributes to.
+     * @return The name of the view to render.
+     */
+    @PostMapping("/process_paypal_order")
+    public String processPayPalOrder(HttpServletRequest request, Model model)
+            throws UnsupportedEncodingException, MessagingException {
+        String orderId = request.getParameter("orderId");
+        String pageTitle = "Checkout Failure";
+        String message = null;
+
+        try {
+            if (payPalService.validateOrder(orderId)) {
+                return placeOrder(request);
+            } else {
+                message = "ERROR: Transaction could not be completed because order information is invalid";
+            }
+        } catch (PayPalApiException e) {
+            message = "ERROR: Transaction failed due to error: " + e.getMessage();
+        }
+
+        model.addAttribute("pageTitle", pageTitle);
+        model.addAttribute("message", message);
+
+        return "message";
     }
 
 }

@@ -10,7 +10,7 @@ public class PaymentSettingBag extends SettingBag {
         super(listSettings);
     }
 
-    public String getURL() {
+    public String getPaypalApiURL() {
         return super.getValue("PAYPAL_API_BASE_URL").orElseThrow();
     }
 
@@ -19,7 +19,7 @@ public class PaymentSettingBag extends SettingBag {
     }
 
     public String getPaypalClientSecret() {
-        return super.getValue("PAYPAL_CLIENT_API_SECRET").orElseThrow();
+        return super.getValue("PAYPAL_API_CLIENT_SECRET").orElseThrow();
     }
 
 }

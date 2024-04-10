@@ -37,7 +37,7 @@
                 </div>
                 <div class="card-body">
                     <div th:if="${checkoutInfo.codSupported}">
-                        <form th:action="@{/checkout/place_order}" method="post">
+                        <form th:action="@{/place_order}" method="post">
                             <p>
                                 <input type="radio" name="paymentMethod" id="radioCOD" value="COD"> Cash on delivery (COD)
                                 &nbsp;
@@ -46,9 +46,11 @@
                         </form>
                     </div>
 
-                    <div id="paypal-button-container">
-
-                    </div>
+                    <div id="paypal-button-container"></div>
+                    <form th:action="@{/process_paypal_order}" method="post" id="paypalForm">
+                        <input type="hidden" name="orderId" id="orderId">
+                        <input type="hidden" name="paymentMethod" value="PAYPAL">
+                    </form>
                 </div>
             </div>
         </div>
@@ -127,6 +129,11 @@
         });
     });
 
+    function valideOrder(orderId) {
+        $("#orderId").val(orderId);
+        $("#paypalForm").submit();
+    }
+
     paypal.Buttons({
         enableStandardCardFields: true,
         createOrder: function (data, actions) {
@@ -175,11 +182,9 @@
         onApprove: function (data, actions) {
             // buyer approved payment
             return actions.order.capture().then(function (details) {
-                console.log(details);
                 orderId = details.id;
-                totalAmount = details.purchase_units[0].amount.value;
+                valideOrder(orderId);
 
-                alert('Transaction completed. Order ID: ' + orderId + ' Total Amount: ' + totalAmount);
             });
         },
 

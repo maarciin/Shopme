@@ -28,18 +28,18 @@ public class OrderService {
     /**
      * Creates a new order with the given parameters.
      *
-     * @param customer       The customer who is placing the order.
-     * @param address        The shipping address for the order.
-     * @param cartItems      The items in the customer's cart.
-     * @param paymentMethod  The payment method chosen by the customer.
-     * @param checkoutInfo   The checkout information for the order.
-     * @return               The created order.
+     * @param customer      The customer who is placing the order.
+     * @param address       The shipping address for the order.
+     * @param cartItems     The items in the customer's cart.
+     * @param paymentMethod The payment method chosen by the customer.
+     * @param checkoutInfo  The checkout information for the order.
+     * @return The created order.
      */
     public Order createOrder(Customer customer, Address address, List<CartItem> cartItems,
                              PaymentMethod paymentMethod, CheckoutInfo checkoutInfo) {
         Order newOrder = new Order();
         newOrder.setOrderTime(new Date());
-        newOrder.setStatus(OrderStatus.NEW);
+        newOrder.setStatus(paymentMethod.equals(PaymentMethod.PAYPAL) ? OrderStatus.PAID : OrderStatus.NEW);
         newOrder.setCustomer(customer);
         newOrder.setProductCost(checkoutInfo.getProductCost());
         newOrder.setSubtotal(checkoutInfo.getProductTotal());
