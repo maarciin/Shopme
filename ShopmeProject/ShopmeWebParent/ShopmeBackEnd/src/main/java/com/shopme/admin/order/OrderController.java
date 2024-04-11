@@ -3,6 +3,7 @@ package com.shopme.admin.order;
 import com.shopme.admin.paging.PagingAndSortingHelper;
 import com.shopme.admin.paging.PagingAndSortingParam;
 import com.shopme.admin.setting.SettingService;
+import com.shopme.common.entity.Country;
 import com.shopme.common.entity.order.Order;
 import com.shopme.common.entity.setting.Setting;
 import jakarta.servlet.http.HttpServletRequest;
@@ -103,5 +104,31 @@ public class OrderController {
         }
 
         return defaultRedirectUrl;
+    }
+
+    /**
+     * Handles the request to edit an order.
+     *
+     * @param id    the ID of the order
+     * @param model the model for the view
+     * @param ra    the redirect attributes
+     * @return the view name for editing the order
+     */
+    @GetMapping("/edit/{id}")
+    public String editOrder(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+        try {
+            Order order = orderService.getOrder(id);
+
+            List<Country> listCountries = orderService.listAllCountries();
+
+            model.addAttribute("order", order);
+            model.addAttribute("pageTitle", "Edit Order (ID: " + id + ")");
+            model.addAttribute("listCountries", listCountries);
+
+            return "orders/order_form";
+        } catch (OrderNotFoundException e) {
+            ra.addFlashAttribute("message", e.getMessage());
+            return defaultRedirectUrl;
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.shopme.admin.order;
 
 import com.shopme.admin.paging.PagingAndSortingHelper;
+import com.shopme.admin.setting.country.CountryRepository;
+import com.shopme.common.entity.Country;
 import com.shopme.common.entity.order.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ public class OrderService {
 
     private static final int ORDERS_PER_PAGE = 10;
     private final OrderRepository orderRepository;
+    private final CountryRepository countryRepository;
 
     /**
      * Retrieves all orders.
@@ -88,5 +91,14 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Could not find any order with ID " + id));
         orderRepository.delete(order);
+    }
+
+    /**
+     * Retrieves a list of all countries.
+     *
+     * @return A list of all countries.
+     */
+    public List<Country> listAllCountries() {
+        return countryRepository.findAllByOrderByName();
     }
 }
