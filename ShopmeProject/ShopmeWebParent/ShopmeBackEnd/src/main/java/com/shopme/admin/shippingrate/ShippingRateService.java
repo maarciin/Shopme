@@ -1,9 +1,11 @@
 package com.shopme.admin.shippingrate;
 
 import com.shopme.admin.paging.PagingAndSortingHelper;
+import com.shopme.admin.product.ProductRepository;
 import com.shopme.admin.setting.country.CountryRepository;
 import com.shopme.common.entity.Country;
 import com.shopme.common.entity.ShippingRate;
+import com.shopme.common.entity.product.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,10 @@ import java.util.Optional;
 public class ShippingRateService {
 
     public static final int RATES_PER_PAGE = 10;
+    private static final int DIM_DIVISOR = 139;
     private final ShippingRateRepository shippingRateRepository;
     private final CountryRepository countryRepository;
+    private final ProductRepository productRepository;
 
     /**
      * Lists entities by page using a helper object for paging and sorting.
@@ -99,4 +103,29 @@ public class ShippingRateService {
         return shippingRateRepository.findById(id)
                 .orElseThrow(() -> new ShippingRateNotFoundException("Could not find shipping rate with ID " + id));
     }
+
+    /**
+     * Calculates the shipping cost for a product to a destination.
+     *
+     * @param productId The ID of the product to calculate the shipping cost for.
+     * @param countryId The ID of the destination country.
+     * @param state     The destination state.
+     * @return The calculated shipping cost.
+     * @throws ShippingRateNotFoundException if no shipping rate is found for the destination.
+     */
+
+    public float calculateShippingCost(Integer productId, Integer countryId, String state) throws ShippingRateNotFoundException {
+
+        ShippingRate shippingRate = shippingRateRepository.findByCountryAndState(countryId, state)
+                .orElseThrow(() -> new ShippingRateNotFoundException("No shipping rate found for the destination. " +
+                        "You have to enter shipping cost manually."));
+
+        Product product = productRepository.findById(productId).get();
+
+        float dimWeight = (product.getLength() * product.getWidth() * product.getHeight()) / DIM_DIVISOR;
+        float finalWeight = Math.max(dimWeight, product.getWeight());
+
+        return finalWeight * shippingRate.getRate();
+    }
+
 }
