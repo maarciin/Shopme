@@ -32,3 +32,8 @@
     min-width: 16%; /* Ustawia minimalną szerokość dla każdej zakładki */
     text-align: center; /* Opcjonalnie, aby wyśrodkować tekst */
 }
+
+body, td, .modal-content {
+    background-color: #333333;
+    color: white;
+}
