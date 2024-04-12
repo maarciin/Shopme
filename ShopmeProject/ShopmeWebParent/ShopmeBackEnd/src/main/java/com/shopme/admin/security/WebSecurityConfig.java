@@ -59,8 +59,8 @@ public class WebSecurityConfig {
             .rememberMe(rem -> rem
                     .key("AbcDefgHijKlmnOpqrs_1234567890")
                     .tokenValiditySeconds(7 * 24 * 60 * 60)
-                    .userDetailsService(userDetailsService()));
-
+                    .userDetailsService(userDetailsService()))
+            .headers(headers -> headers.frameOptions().sameOrigin());
         return http.build();
     }
 
