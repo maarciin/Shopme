@@ -70,7 +70,6 @@ function updateOrderAmounts() {
 
     tax = parseFloat(fieldTax.val().replace(",", "."));
     orderTotal = orderSubtotal + tax + shippingCost;
-    alert(orderTotal);
 
     setAndFormatNumberForField("total", orderTotal);
 }

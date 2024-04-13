@@ -2,6 +2,7 @@ package com.shopme.admin.shippingrate;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,7 +26,7 @@ public class ShippingRateRestController {
      * @throws ShippingRateNotFoundException If no shipping rate is found for the given parameters.
      */
     @PostMapping("/get_shipping_cost")
-    public String getShippingCost(Integer productId, Integer countryId, String state) throws ShippingRateNotFoundException {
+    public String getShippingCost(@RequestParam Integer productId, @RequestParam Integer countryId, @RequestParam String state) throws ShippingRateNotFoundException {
         return String.valueOf(shippingRateService.calculateShippingCost(productId, countryId, state));
     }
 }
