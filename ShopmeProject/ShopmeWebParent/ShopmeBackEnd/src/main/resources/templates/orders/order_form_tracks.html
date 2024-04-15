@@ -50,7 +50,7 @@
                                 <th:block
                                         th:each="os : ${T(com.shopme.common.entity.order.OrderStatus).values()}">
                                     <option th:value="${os}" th:text="${os}"
-                                            th:selected="${os == track.status}"
+                                            th:selected="${os.name == track.status.name}"
                                             th:defaultDescription="${os.defaultDescription}" />
                                 </th:block>
 

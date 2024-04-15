@@ -9,8 +9,9 @@
         <h2>Manage Orders | [[${pageTitle}]]</h2>
     </div>
 
-    <form th:action="@{/orders/save}" method="post"
+    <form th:action="@{/orders/save}" method="post" onsubmit="return processFormBeforeSubmit();"
           th:object="${order}">
+        <input type="hidden" th:field="*{id}" />
 
         <div>
             <!-- Nav tabs -->

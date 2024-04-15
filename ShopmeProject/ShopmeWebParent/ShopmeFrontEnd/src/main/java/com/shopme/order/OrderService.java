@@ -4,10 +4,7 @@ import com.shopme.checkout.CheckoutInfo;
 import com.shopme.common.entity.Address;
 import com.shopme.common.entity.CartItem;
 import com.shopme.common.entity.Customer;
-import com.shopme.common.entity.order.Order;
-import com.shopme.common.entity.order.OrderDetail;
-import com.shopme.common.entity.order.OrderStatus;
-import com.shopme.common.entity.order.PaymentMethod;
+import com.shopme.common.entity.order.*;
 import com.shopme.common.entity.product.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -74,6 +71,14 @@ public class OrderService {
 
             orderDetails.add(orderDetail);
         });
+
+        OrderTrack orderTrack = new OrderTrack();
+        orderTrack.setOrder(newOrder);
+        orderTrack.setStatus(OrderStatus.NEW);
+        orderTrack.setNotes(OrderStatus.NEW.defaultDescription());
+        orderTrack.setUpdatedTime(new Date());
+
+        newOrder.getOrderTracks().add(orderTrack);
 
         // Save the new order to the database.
         return orderRepository.save(newOrder);

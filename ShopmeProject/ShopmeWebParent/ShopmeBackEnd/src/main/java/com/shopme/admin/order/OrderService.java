@@ -101,4 +101,18 @@ public class OrderService {
     public List<Country> listAllCountries() {
         return countryRepository.findAllByOrderByName();
     }
+
+    /**
+     * Saves an order.
+     *
+     * @param orderInForm The order to save.
+     */
+    public void save(Order orderInForm) throws OrderNotFoundException {
+        Order orderInDB = orderRepository.findById(orderInForm.getId())
+                .orElseThrow(() -> new OrderNotFoundException("Could not find any order with ID " + orderInForm.getId()));
+        orderInForm.setOrderTime(orderInDB.getOrderTime());
+        orderInForm.setCustomer(orderInDB.getCustomer());
+
+        orderRepository.save(orderInForm);
+    }
 }

@@ -27,7 +27,8 @@ $(document).ready(function() {
 function deleteTrack(link) {
 	rowNumber = link.attr('rowNumber');
 	$("#rowTrack" + rowNumber).remove();
-	$("#emptyLine" + rowNumber).remove();	
+	$("#emptyLine" + rowNumber).remove();
+	trackRecordCount--;
 }
 
 function updateTrackCountNumbers() {
