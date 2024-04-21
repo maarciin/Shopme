@@ -33,7 +33,7 @@
     text-align: center; /* Opcjonalnie, aby wyśrodkować tekst */
 }
 
-body, td, .modal-content {
+body, td, .modal-content, .card {
     background-color: #333333;
     color: white;
 }

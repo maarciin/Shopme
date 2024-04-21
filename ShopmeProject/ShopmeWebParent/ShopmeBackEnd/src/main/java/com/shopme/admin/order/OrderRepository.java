@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface OrderRepository extends SearchRepository<Order, Integer>, JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE "
+            + "CONCAT('#', o.id) LIKE %?1% OR "
+            + "CONCAT(o.firstName, ' ', o.lastName) LIKE %?1% OR "
             + "o.firstName LIKE %?1% OR "
             + "o.lastName LIKE %?1% OR "
             + "o.addressLine1 LIKE %?1% OR "
