@@ -4,6 +4,8 @@ import com.shopme.admin.paging.PagingAndSortingHelper;
 import com.shopme.admin.setting.country.CountryRepository;
 import com.shopme.common.entity.Country;
 import com.shopme.common.entity.order.Order;
+import com.shopme.common.entity.order.OrderStatus;
+import com.shopme.common.entity.order.OrderTrack;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -114,5 +117,35 @@ public class OrderService {
         orderInForm.setCustomer(orderInDB.getCustomer());
 
         orderRepository.save(orderInForm);
+    }
+
+    /**
+     * Updates the status of an order.
+     * This method retrieves an order from the database using the provided order ID, and updates its status
+     * to the provided status if the current status of the order is different from the provided status.
+     * It also creates a new OrderTrack object, sets its status, updated time, and notes, and adds it to the
+     * order's list of OrderTrack objects. Finally, it saves the updated order back to the database.
+     *
+     * @param orderId The ID of the order to update.
+     * @param status  The new status to set on the order.
+     */
+    public void updateStatus(Integer orderId, String status) {
+        Order orderInDB = orderRepository.findById(orderId).get();
+        OrderStatus statusToUpdate = OrderStatus.valueOf(status);
+
+        if (!orderInDB.hasStatus(statusToUpdate)) {
+            List<OrderTrack> orderTracks = orderInDB.getOrderTracks();
+            OrderTrack track = new OrderTrack();
+            track.setOrder(orderInDB);
+            track.setStatus(statusToUpdate);
+            track.setUpdatedTime(new Date());
+            track.setNotes(statusToUpdate.defaultDescription());
+
+            orderTracks.add(track);
+
+            orderInDB.setStatus(statusToUpdate);
+
+            orderRepository.save(orderInDB);
+        }
     }
 }
