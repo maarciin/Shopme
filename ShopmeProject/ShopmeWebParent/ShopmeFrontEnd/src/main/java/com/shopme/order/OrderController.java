@@ -23,7 +23,7 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String listFirstPage(Model model, HttpServletRequest request) {
-        return list(model, request, 1, "orderTime", "desc", null);
+        return listOrdersByPage(model, request, 1, "orderTime", "desc", null);
     }
 
     @GetMapping("/orders/page/{pageNum}")
