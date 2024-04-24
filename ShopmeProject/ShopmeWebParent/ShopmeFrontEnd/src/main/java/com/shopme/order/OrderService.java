@@ -7,6 +7,10 @@ import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.order.*;
 import com.shopme.common.entity.product.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,6 +24,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class OrderService {
 
+    public static final int ORDERS_PER_PAGE = 5;
     private final OrderRepository orderRepository;
 
     /**
@@ -83,4 +88,18 @@ public class OrderService {
         // Save the new order to the database.
         return orderRepository.save(newOrder);
     }
+
+    public Page<Order> listForCustomerByPage(Customer customer, int pageNum, String sortField, String sortDir, String keyword) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(pageNum - 1, ORDERS_PER_PAGE, sort);
+
+        if (keyword != null) {
+            return orderRepository.findAll(keyword, customer.getId(), pageable);
+        }
+
+        return orderRepository.findAll(customer.getId(), pageable);
+    }
+
 }

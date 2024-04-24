@@ -3,6 +3,7 @@ package com.shopme.common.entity.order;
 import com.shopme.common.entity.AbstractAddress;
 import com.shopme.common.entity.Address;
 import com.shopme.common.entity.Customer;
+import com.shopme.common.entity.product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -215,4 +216,15 @@ public class Order extends AbstractAddress {
         return hasStatus(OrderStatus.RETURNED);
     }
 
+    @Transient
+    public boolean isReturnRequested() {
+        return hasStatus(OrderStatus.RETURN_REQUESTED);
+    }
+
+    @Transient
+    public List<Product> getListOfProducts() {
+        return orderDetails.stream()
+                .map(OrderDetail::getProduct)
+                .toList();
+    }
 }
